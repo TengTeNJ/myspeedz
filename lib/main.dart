@@ -68,14 +68,16 @@ class _MainAppState extends State<MainApp> {
                       ),
                     ),
 
-                    Text('Myspeedz',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontFamily: 'tengxun',
-                        color: Colors.white,
-                        fontSize: 22,
-                      ),
-                    ),
+                    // Text('Myspeedz',
+                    //   textAlign: TextAlign.center,
+                    //   style: TextStyle(
+                    //     fontFamily: 'tengxun',
+                    //     color: Colors.white,
+                    //     fontSize: 22,
+                    //   ),
+                    // ),
+                    Constants.boldWhiteTextWidget("Myspeedz", 22),
+
                     Container(
                      margin: EdgeInsets.only(right: 24),
                      child: Image(

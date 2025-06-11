@@ -4,6 +4,25 @@
             "outputFile": "com.example.my_speedz.app-mergeDebugResources-24:/values/values.xml",
             "map": [
                 {
+                    "source": "/Users/mengheng/Documents/GitHub/myspeedz/android/app/src/main/res/values/styles.xml",
+                    "from": {
+                        "startLines": "3,14",
+                        "startColumns": "4,4",
+                        "startOffsets": "173,818",
+                        "endLines": "7,16",
+                        "endColumns": "12,12",
+                        "endOffsets": "476,982"
+                    },
+                    "to": {
+                        "startLines": "155,159",
+                        "startColumns": "4,4",
+                        "startOffsets": "7894,8075",
+                        "endLines": "158,161",
+                        "endColumns": "12,12",
+                        "endOffsets": "8070,8239"
+                    }
+                },
+                {
                     "source": "/Users/mengheng/.gradle/caches/8.10.2/transforms/13dd610fda78ecd8ad3daad9b8195d7e/transformed/jetified-activity-1.8.1/res/values/values.xml",
                     "from": {
                         "startLines": "2,3",
@@ -105,25 +124,6 @@
                         "startOffsets": "6888",
                         "endColumns": "42",
                         "endOffsets": "6926"
-                    }
-                },
-                {
-                    "source": "/Users/mengheng/AndroidStudioProjects/My_Speedz/android/app/src/main/res/values/styles.xml",
-                    "from": {
-                        "startLines": "3,14",
-                        "startColumns": "4,4",
-                        "startOffsets": "173,818",
-                        "endLines": "7,16",
-                        "endColumns": "12,12",
-                        "endOffsets": "476,982"
-                    },
-                    "to": {
-                        "startLines": "155,159",
-                        "startColumns": "4,4",
-                        "startOffsets": "7894,8075",
-                        "endLines": "158,161",
-                        "endColumns": "12,12",
-                        "endOffsets": "8070,8239"
                     }
                 },
                 {
