@@ -2,6 +2,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../utils/color.dart';
+
 class Constants {
 
   // 生成随机数
@@ -143,7 +145,7 @@ class Constants {
           height: height,
           fontFamily: 'SanFranciscoDisplay',
           fontWeight: FontWeight.w500,
-          color: Color.fromRGBO(233, 100, 21, 1.0),
+          color: Color.fromRGBO(241, 18, 18, 1.0),
           fontSize: fontSize),
     );
   }
@@ -163,8 +165,9 @@ class Constants {
           height: height,
           fontFamily: 'SanFranciscoDisplay',
           fontWeight: fontWeight,
-          color: Colors.red,
-          fontSize: fontSize),
+          color:hexStringToColor(color),
+
+        fontSize: fontSize),
     );
   }
 
@@ -184,10 +187,15 @@ class Constants {
   static Color dialogBgColor = Color.fromRGBO(49, 52, 67, 1);
   static Color powerOffDialogBgColor = Color.fromRGBO(61, 19, 18, 1);
   static Color remindIndicatorColor = Color.fromRGBO(248, 98, 21, 1);
+
+
   static Color bluetoothBGColor = Color.fromRGBO(32, 71, 209, 1);
   static Color grayIndicatirColor = Color.fromRGBO(93, 93, 93, 1);
   static Color actionBGColor = Color.fromRGBO(53, 54, 59, 1);
   static Color typeTextColor = Color.fromRGBO(180, 180, 180, 1);
+  static Color switchBtnHighBGColor = Color.fromRGBO(44, 88, 220, 1);
+  static Color controllerBGColor = Color.fromRGBO(39, 41, 48, 1);
+
 
 
 

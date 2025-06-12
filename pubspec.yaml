@@ -37,6 +37,8 @@ dependencies:
   cupertino_icons: ^1.0.8
   square_progress_indicator: ^0.0.8
   #circle_progress: ^0.0.1
+  syncfusion_flutter_charts: ^28.2.4
+
 
 
 

@@ -26,14 +26,46 @@ class _CircleProgressWidgetState extends State<CircleProgressWidget> {
       ),
     );
     String txt = "${(100 * widget.progress.value).toStringAsFixed(0)}";
-    var text = Text(
-      widget.progress.value == 1.0 ? widget.progress.completeText : txt,
-      style: widget.progress.style ??
-          TextStyle(fontSize: widget.progress.radius / 6),
-    );
+    // var text = Text(
+    //   widget.progress.value == 1.0 ? widget.progress.completeText : txt,
+    //   style: widget.progress.style ??
+    //       TextStyle(fontSize: widget.progress.radius / 6),
+    // );
+    //
+    // var unit = Text(
+    //   "Km/h",
+    //    style:TextStyle(fontSize: 30,color: Colors.white) ,
+    // );
+
+    var rich = RichText(
+        textAlign: TextAlign.center,
+        text: TextSpan(
+            text: txt,
+            style: TextStyle(
+              color:Colors.white,
+              fontFamily: 'tengxun',
+              fontWeight: FontWeight.w400,
+              fontSize: 90,
+              height: 1.2,
+
+
+            ),
+            children: <TextSpan>[
+              TextSpan(
+                text: '\nKm/h',
+                style: TextStyle(
+                  fontFamily: 'SanFranciscoDisplay',
+                  fontWeight: FontWeight.w500,
+                  fontSize: 30,
+                  height: 1.0,
+
+                ),
+              ),
+            ]));
+
     return Stack(
       alignment: Alignment.center,
-      children: <Widget>[progress,text],
+      children: <Widget>[progress,rich],
     );
   }
 }
@@ -76,10 +108,6 @@ class ProgressPainter extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..color = progress.backgroundColor
       ..strokeWidth = progress.strokeWidth;
-    // canvas.drawCircle(Offset(progress.radius - progress.strokeWidth / 2, progress.radius - progress.strokeWidth / 2),
-    //     progress.radius - progress.strokeWidth / 2 - 100 , paint123);
-    // print('11111${(progress.radius - progress.strokeWidth) / 2}');
-    // print('11111${progress.radius - progress.strokeWidth / 2 - 100}');
 
     paint123//进度
       ..color = Color.fromRGBO(1, 0, 0, 1.0)
@@ -89,11 +117,6 @@ class ProgressPainter extends CustomPainter {
 
     double sweepAngle = progress.value * 360; //完成角度
     print(sweepAngle);
-   //  canvas.drawArc(Rect.fromLTRB(0, 0, (progress.radius - progress.strokeWidth) / 2 * 2, (progress.radius - progress.strokeWidth) * 2),
-   //      -90 / 180 * pi, sweepAngle / 180 * pi, true, paint123);
-   // print('11111${(progress.radius - progress.strokeWidth) / 2 * 2}');
-   //  print('22222${(progress.radius - progress.strokeWidth) * 2}');
-   //  print('33333${sweepAngle / 180 * pi}');
 
     // 创建圆的画笔
     Offset center = Offset( 196, 196);
@@ -132,7 +155,7 @@ class ProgressPainter extends CustomPainter {
     canvas.translate((progress.radius - progress.strokeWidth), (progress.radius - progress.strokeWidth));
     for (double i = 0; i < num; i++) {
       canvas.save();
-      double deg = 360 / num * i;
+      double deg = 360 / num * i + 180;
       canvas.rotate(deg / 180 * pi);
       paint123
         ..strokeWidth = progress.strokeWidth / 2
@@ -141,6 +164,15 @@ class ProgressPainter extends CustomPainter {
       if (i * (360 / num) <= progress.value * 360) {
         paint123..color = progress.color;
       }
+      print("起始点${(progress.radius - progress.strokeWidth) * 3 / 4}");
+      print("终点${(progress.radius - progress.strokeWidth) * 4 / 5}");
+
+      Point point1 = Point(0, (progress.radius - progress.strokeWidth) * 3 / 4);
+      Point point2 = Point(0, (progress.radius - progress.strokeWidth) * 4 / 8);
+
+      double distance = calculateDistance(point1, point2);
+      print('两个点之间的距离是: $distance');
+
       canvas.drawLine(
           Offset(0, (progress.radius - progress.strokeWidth) * 3 / 4),
           Offset(0, (progress.radius - progress.strokeWidth) * 4 / 5),
@@ -149,9 +181,24 @@ class ProgressPainter extends CustomPainter {
     }
     canvas.restore();
   }
+
+  double calculateDistance(Point point1, Point point2) {
+    double x1 = point1.x;
+    double y1 = point1.y;
+    double x2 = point2.x;
+    double y2 = point2.y;
+
+    double distance = sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
+    return distance;
+  }
 }
 
+class Point {
+  double x;
+  double y;
 
+  Point(this.x, this.y);
+}
 
 ///信息描述类 [value]为进度，在0~1之间,进度条颜色[color]，
 ///未完成的颜色[backgroundColor],圆的半径[radius],线宽[strokeWidth]
@@ -161,7 +208,7 @@ class Progress {
   Color color = Colors.green;
   Color backgroundColor = Colors.red;
   double radius = 1.0;
-  double strokeWidth = 2.0;
+  double strokeWidth = 3.0;
   int dotCount = 40;
   TextStyle style = TextStyle(color: Colors.white);
   String completeText = "OK";
