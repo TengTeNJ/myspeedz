@@ -1,11 +1,14 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:my_speedz/solo_home_controller.dart';
+import 'package:my_speedz/view/battle_data_view.dart';
 
 class CircleProgressWidget extends StatefulWidget {
   final Progress progress;
+  final CurrentMode mode;
 
-  CircleProgressWidget({required this.progress});
+  CircleProgressWidget({required this.progress ,required this.mode});
   @override
   _CircleProgressWidgetState createState() => _CircleProgressWidgetState();
 }
@@ -45,7 +48,7 @@ class _CircleProgressWidgetState extends State<CircleProgressWidget> {
               color:Colors.white,
               fontFamily: 'tengxun',
               fontWeight: FontWeight.w400,
-              fontSize: 90,
+              fontSize: 100,
               height: 1.2,
 
 
@@ -63,9 +66,15 @@ class _CircleProgressWidgetState extends State<CircleProgressWidget> {
               ),
             ]));
 
-    return Stack(
+
+    return widget.mode == CurrentMode.soloMode ?  Stack(
       alignment: Alignment.center,
-      children: <Widget>[progress,rich],
+      children: <Widget>[progress,rich], /// battle 的view
+
+    )
+    : Stack(
+    alignment: Alignment.center,
+    children: <Widget>[progress,BattleDataView()], /// solo 的view
     );
   }
 }
@@ -158,7 +167,7 @@ class ProgressPainter extends CustomPainter {
       double deg = 360 / num * i + 180;
       canvas.rotate(deg / 180 * pi);
       paint123
-        ..strokeWidth = progress.strokeWidth / 2
+        ..strokeWidth = progress.strokeWidth
         ..color = progress.backgroundColor
         ..strokeCap = StrokeCap.round;
       if (i * (360 / num) <= progress.value * 360) {
@@ -168,14 +177,14 @@ class ProgressPainter extends CustomPainter {
       print("终点${(progress.radius - progress.strokeWidth) * 4 / 5}");
 
       Point point1 = Point(0, (progress.radius - progress.strokeWidth) * 3 / 4);
-      Point point2 = Point(0, (progress.radius - progress.strokeWidth) * 4 / 8);
+      Point point2 = Point(0, (progress.radius - progress.strokeWidth) * 0.846);
 
       double distance = calculateDistance(point1, point2);
       print('两个点之间的距离是: $distance');
 
       canvas.drawLine(
-          Offset(0, (progress.radius - progress.strokeWidth) * 3 / 4),
-          Offset(0, (progress.radius - progress.strokeWidth) * 4 / 5),
+          Offset(0, (progress.radius - progress.strokeWidth) * 3 / 4), // 内侧的点
+          Offset(0, (progress.radius - progress.strokeWidth) * 0.846),// 外侧的点
           paint123);
       canvas.restore();
     }

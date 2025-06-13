@@ -195,6 +195,7 @@ class Constants {
   static Color typeTextColor = Color.fromRGBO(180, 180, 180, 1);
   static Color switchBtnHighBGColor = Color.fromRGBO(44, 88, 220, 1);
   static Color controllerBGColor = Color.fromRGBO(39, 41, 48, 1);
+  static Color battleHighBGColor = Color.fromRGBO(85, 67, 200, 1);
 
 
 

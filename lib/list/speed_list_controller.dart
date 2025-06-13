@@ -65,20 +65,44 @@ class _SpeedListControllerState extends State<SpeedListController> {
 
 
 
+            Container(
+              margin: EdgeInsets.only(top: 24),
+              child:Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                    margin: EdgeInsets.only(left: 24),
+                    width: 138,
+                    height: 36,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(18),
+                      color: Constants.actionBGColor,
+                    ),
+                    child: SoloBattleSwitchView(leftTitle: "Solo", rightTitle: "Battle"),
+                  ),
+
+                  Container(
+                    padding: EdgeInsets.only(right: 24),
+                    color:  Constants.darkControllerColor,
+                    // width: 48,
+                    // height: 48,
+                    child: Image(
+                      fit: BoxFit.fitWidth,
+                      width:16.85,
+                      height: 19.72,
+                      image: AssetImage('images/home/sort_icon.png'),
+                    ),
+                  ),
+
+                ],
+              ),
+            ),
+
+
 
               Container(
-                margin: EdgeInsets.only(left: 24,top: 32),
-                width: 138,
-                height: 36,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(18),
-                  color: Constants.actionBGColor,
-                ),
-                child: SoloBattleSwitchView(leftTitle: "Solo", rightTitle: "Battle"),
-              ),
-              
-              Container(
-                margin: EdgeInsets.only(left: 24,right: 24),
+                margin: EdgeInsets.only(left: 24,right: 24,top: 0),
                 height: Constants.screenHeight(context) -200,
                 child: SpeedListView(datas: data),
               ),
