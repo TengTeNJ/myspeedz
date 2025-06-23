@@ -191,6 +191,9 @@ class Constants {
 
   static Color bluetoothBGColor = Color.fromRGBO(32, 71, 209, 1);
   static Color grayIndicatirColor = Color.fromRGBO(93, 93, 93, 1);
+  static Color greenIndicatirColor = Color.fromRGBO(65, 52, 249, 1);
+
+
   static Color actionBGColor = Color.fromRGBO(53, 54, 59, 1);
   static Color typeTextColor = Color.fromRGBO(180, 180, 180, 1);
   static Color switchBtnHighBGColor = Color.fromRGBO(44, 88, 220, 1);
@@ -227,10 +230,10 @@ const kDataFrameFoot = 0xAA; // 数据帧尾
 const kTCPDataListen = 'tcp_data_listen'; //  TCP数据监听
 
 // 蓝牙设置名字
-const kBLEDevice_NewName = 'seekbot2.0';
+const kBLEDevice_NewName = 'Myspeedz';
 // 新版本的digital shoots和270的蓝牙模块保持一致
-const kBLE_270_SERVICE_UUID = "181A";
-const kBLE_270_CHARACTERISTIC_NOTIFY_UUID = "2A6E";
+const kBLE_270_SERVICE_UUID = "ffe0";
+const kBLE_270_CHARACTERISTIC_NOTIFY_UUID = "ffe4";
 const kBLE_270_CHARACTERISTIC_WRITER_UUID = "2A6F";
 
 /// 数据回调
