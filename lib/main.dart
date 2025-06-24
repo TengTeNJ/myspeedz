@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:my_speedz/circle_progress_widget.dart';
 import 'package:my_speedz/constants/constants.dart';
 import 'package:my_speedz/routes/routes.dart';
@@ -31,7 +32,8 @@ class _MainAppState extends State<MainApp> {
     NavigatorUtil.init(context);
     return MaterialApp(
       onGenerateRoute: Routes.onGenerateRoute,
-      home: SoloHomeController()
+      home: SoloHomeController(),
+      builder: EasyLoading.init(),
     );
   }
 }

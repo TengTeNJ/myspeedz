@@ -1,6 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:my_speedz/routes/routes.dart';
+import 'package:my_speedz/utils/blue_tooth_manager.dart';
+import 'package:my_speedz/utils/dialog.dart';
 import 'package:my_speedz/utils/navigator_util.dart';
+import 'package:my_speedz/utils/speedz_manager.dart';
 
 import 'circle_progress_widget.dart';
 import 'constants/constants.dart';
@@ -20,7 +25,9 @@ class SoloHomeController extends StatefulWidget {
 
 class _SoloHomeControllerState extends State<SoloHomeController> {
   double progress = 0;
+  double currentSpeedValue = 0;
   CurrentMode selectedMode = CurrentMode.soloMode;
+  Timer? _timer;
 
 
  @override
@@ -28,7 +35,32 @@ class _SoloHomeControllerState extends State<SoloHomeController> {
     // TODO: implement initState
     super.initState();
     selectedMode = CurrentMode.soloMode;
+
+    BluetoothManager();
+    // 扫描蓝牙设备
+    Future.delayed(Duration(milliseconds: 1000),(){
+     BluetoothManager().startNewScan();
+    });
+
+    BluetoothManager().dataChange = (measureSpeed) {
+      print("666测量到的速度${measureSpeed}");
+      measuredSoeed(measureSpeed);
+    };
   }
+
+  void measuredSoeed(int measureSpeed) {
+    currentSpeedValue = 0;
+    progress = 0;
+    setState(() {});
+    _timer = Timer.periodic(Duration(milliseconds: 30), (timer) {
+      if (currentSpeedValue <  measureSpeed ) {
+        currentSpeedValue += 1;
+        progress += 0.005;
+        print('进度${progress}');
+        setState(() {});
+      }
+    });
+ }
 
   @override
   Widget build(BuildContext context) {
@@ -50,6 +82,9 @@ class _SoloHomeControllerState extends State<SoloHomeController> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     GestureDetector(onTap: (){
+                      print("蓝牙点击");
+                      TTDialog.bleListDialog(context);
+
                     },
                       child: Container(
                         margin: EdgeInsets.only(top: 0,left: 19),
@@ -85,6 +120,7 @@ class _SoloHomeControllerState extends State<SoloHomeController> {
               height: 400,
               margin: EdgeInsets.only(top: 30),
               child:  CircleProgressWidget(progress: Progress(value: progress,
+                  calculateSpeed: currentSpeedValue,
                   color:Color.fromRGBO(46, 206, 255, 1),
                   backgroundColor: Constants.actionBGColor,
                   radius: 200, // 圆的半径
@@ -97,21 +133,23 @@ class _SoloHomeControllerState extends State<SoloHomeController> {
             ),
 
             GestureDetector(onTap: (){
-              progress += 0.01;
-              setState(() {});
+              measuredSoeed(26);
             },
               child: Container(
                 width: 20,
                 height: 20,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
-                  color: Constants.grayIndicatirColor,
+                  color:
+                  selectedMode == CurrentMode.battleMode ?
+                  Constants.greenIndicatirColor : Constants.grayIndicatirColor ,
                 ),
 
               ),
             ),
 
 
+            /// LIST
             Container(
               margin: EdgeInsets.only(top: 90,left: 40,right: 40),
               child: Row(
@@ -124,10 +162,21 @@ class _SoloHomeControllerState extends State<SoloHomeController> {
                       width: 85,
                       height: 57,
                       decoration: BoxDecoration(
-                        color: Constants.actionBGColor,
+                        color: selectedMode == CurrentMode.battleMode ?
+                        Constants.switchBtnHighBGColor : Constants.actionBGColor ,
                         borderRadius: BorderRadius.circular(29),
                       ),
-                      child: Center(
+                      child: selectedMode == CurrentMode.battleMode ?
+                    Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Center(
+                          child: Image(image: AssetImage('images/home/list_icon.png'),width: 20,height: 23,),
+                        ),
+                        SizedBox(width: 10,),
+                        Constants.regularWhiteTextWidget("20", 16, Colors.white),
+                      ],)
+                          : Center(
                         child: Image(image: AssetImage('images/home/list_icon.png'),width: 20,height: 23,),
                       ),
                     ),
@@ -137,18 +186,23 @@ class _SoloHomeControllerState extends State<SoloHomeController> {
 
                   /// Battle
                   GestureDetector(onTap: (){
-                     selectedMode = CurrentMode.battleMode;
+                     if (selectedMode == CurrentMode.battleMode) {
+                       selectedMode = CurrentMode.soloMode;
+                     } else {
+                       selectedMode = CurrentMode.battleMode;
+                     }
                      setState(() {});
                    },
                     child: Container(
                       width: 85,
                       height: 57,
                       decoration: BoxDecoration(
-                        // color: Constants.actionBGColor,
-                        color: Constants.battleHighBGColor,
+                        color: selectedMode == CurrentMode.battleMode ?
+                        Constants.battleHighBGColor : Constants.actionBGColor ,
                         borderRadius: BorderRadius.circular(29),
                       ),
-                      child: Row(
+                      child: selectedMode == CurrentMode.battleMode ?
+                      Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Center(
@@ -158,6 +212,9 @@ class _SoloHomeControllerState extends State<SoloHomeController> {
                           Constants.regularWhiteTextWidget("2", 16, Colors.white),
                         ],
 
+                      ) :
+                      Center(
+                        child: Image(image: AssetImage('images/home/battle_icon.png'),width: 26,height: 21,),
                       ),
 
 
