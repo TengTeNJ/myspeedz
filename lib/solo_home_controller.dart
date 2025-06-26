@@ -1,8 +1,11 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:my_speedz/models/solo_speed_model.dart';
 import 'package:my_speedz/routes/routes.dart';
+import 'package:my_speedz/utils/ble_util.dart';
 import 'package:my_speedz/utils/blue_tooth_manager.dart';
+import 'package:my_speedz/utils/data_base.dart';
 import 'package:my_speedz/utils/dialog.dart';
 import 'package:my_speedz/utils/navigator_util.dart';
 import 'package:my_speedz/utils/speedz_manager.dart';
@@ -39,16 +42,42 @@ class _SoloHomeControllerState extends State<SoloHomeController> {
     BluetoothManager();
     // 扫描蓝牙设备
     Future.delayed(Duration(milliseconds: 1000),(){
-     BluetoothManager().startNewScan();
+    // BluetoothManager().startNewScan();
+       BleUtil.begainScan(context);
+
     });
 
     BluetoothManager().dataChange = (measureSpeed) {
       print("666测量到的速度${measureSpeed}");
-      measuredSoeed(measureSpeed);
+      measuredSoeedAnimation(measureSpeed);
+      dataStorage(measureSpeed);
     };
+
+    getStorageData();
   }
 
-  void measuredSoeed(int measureSpeed) {
+  /// 数据存储
+  void dataStorage(int speed) {
+    var model = SoloSpeedModel(speedData: speed.toString(), name: "Default 1");
+    DataBaseHelper().insertData(kDataBaseTableName, model);
+  }
+
+  /// 获取存储的数据
+  void getStorageData() async {
+    final list = await DataBaseHelper().getData(kDataBaseTableName);
+    if (list.length > 0) {
+      var recentlyModel = list.last;
+      print("最近的一次数据为${recentlyModel}");
+      /// 获取到最近的一次数据做动画
+      measuredSoeedAnimation(int.parse(recentlyModel.speedData));
+      setState(() {});
+    }
+ }
+
+
+  /// 根据测量到的速度做动画
+  void measuredSoeedAnimation(int measureSpeed) {
+   _timer?.cancel();
     currentSpeedValue = 0;
     progress = 0;
     setState(() {});
@@ -133,7 +162,7 @@ class _SoloHomeControllerState extends State<SoloHomeController> {
             ),
 
             GestureDetector(onTap: (){
-              measuredSoeed(26);
+              measuredSoeedAnimation(26);
             },
               child: Container(
                 width: 20,
@@ -287,3 +316,4 @@ class _SoloHomeControllerState extends State<SoloHomeController> {
     );
   }
 }
+

@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import '../constants/constants.dart';
 
 class BattleDataView extends StatefulWidget {
-  const BattleDataView({super.key});
+  double speedData;
+
+  BattleDataView({required this.speedData});
 
   @override
   State<BattleDataView> createState() => _BattleDataViewState();
@@ -70,7 +72,7 @@ class _BattleDataViewState extends State<BattleDataView> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text('80',
+                  Text('${widget.speedData.toStringAsFixed(0)}',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontFamily: 'tengxun',
