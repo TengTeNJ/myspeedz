@@ -4,6 +4,7 @@ import 'package:my_speedz/models/speed_model.dart';
 import 'package:my_speedz/utils/navigator_util.dart';
 
 import '../constants/constants.dart';
+import '../utils/data_base.dart';
 import '../view/solo_battle_switch_view.dart';
 import 'data_bar_view.dart';
 
@@ -24,16 +25,26 @@ class _SpeedChartControllerState extends State<SpeedChartController> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    getStorageData();
 
-    for (int i = 0 ; i < 10 ; i++) {
+  }
 
+
+  /// 获取存储的数据
+  void getStorageData() async {
+    final list = await DataBaseHelper().getData(kDataBaseTableName);
+    for (int i = 0 ; i < list.length ; i++) {
+      var soloModel = list[i];
       SpeedModel model = SpeedModel("","");
-      model.speed = 100 + i *10;
+      model.speed = int.parse(soloModel.speedData);
       model.indexString = i.toString();
       datas.add(model);
       maxLeft =  40;
     }
+    setState(() {});
   }
+
+
 
   @override
   Widget build(BuildContext context) {

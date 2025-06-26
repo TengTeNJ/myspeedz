@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:my_speedz/solo_home_controller.dart';
 import 'package:my_speedz/view/battle_data_view.dart';
 
+import 'constants/constants.dart';
+
 class CircleProgressWidget extends StatefulWidget {
   final Progress progress;
   final CurrentMode mode;
@@ -28,7 +30,7 @@ class _CircleProgressWidgetState extends State<CircleProgressWidget> {
             radius: widget.progress.radius - widget.progress.strokeWidth / 2),
       ),
     );
-    String txt = "${(100 * widget.progress.value).toStringAsFixed(0)}";
+    String txt = "${( widget.progress.calculateSpeed).toStringAsFixed(0)}";
     // var text = Text(
     //   widget.progress.value == 1.0 ? widget.progress.completeText : txt,
     //   style: widget.progress.style ??
@@ -49,10 +51,7 @@ class _CircleProgressWidgetState extends State<CircleProgressWidget> {
               fontFamily: 'tengxun',
               fontWeight: FontWeight.w400,
               fontSize: 100,
-              height: 1.2,
-
-
-            ),
+              height: 1.2,),
             children: <TextSpan>[
               TextSpan(
                 text: '\nKm/h',
@@ -66,15 +65,33 @@ class _CircleProgressWidgetState extends State<CircleProgressWidget> {
               ),
             ]));
 
+   var margin = SizedBox(height: 44,);
+   var row = Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        SizedBox(height: 144,),
+        Constants.mediumWhiteTextWidget("Km/h", 30, Colors.white),
+        SizedBox(width: 6,),
+        Container(
+          child: Image(
+            fit: BoxFit.contain,
+            width:12,
+            height: 7,
+            image: AssetImage('images/home/arrow_icon.png'),
+          ),
+        ),
+      ],
+    );
 
     return widget.mode == CurrentMode.soloMode ?  Stack(
       alignment: Alignment.center,
-      children: <Widget>[progress,rich], /// battle 的view
+      children: <Widget>[progress,rich], /// solo 的view
 
     )
     : Stack(
     alignment: Alignment.center,
-    children: <Widget>[progress,BattleDataView()], /// solo 的view
+    children: <Widget>[progress,BattleDataView(speedData: widget.progress.calculateSpeed)], /// battle 的view
     );
   }
 }
@@ -125,7 +142,7 @@ class ProgressPainter extends CustomPainter {
       ..style = PaintingStyle.fill;
 
     double sweepAngle = progress.value * 360; //完成角度
-    print(sweepAngle);
+    // print(sweepAngle);
 
     // 创建圆的画笔
     Offset center = Offset( 196, 196);
@@ -173,14 +190,14 @@ class ProgressPainter extends CustomPainter {
       if (i * (360 / num) <= progress.value * 360) {
         paint123..color = progress.color;
       }
-      print("起始点${(progress.radius - progress.strokeWidth) * 3 / 4}");
-      print("终点${(progress.radius - progress.strokeWidth) * 4 / 5}");
+      // print("起始点${(progress.radius - progress.strokeWidth) * 3 / 4}");
+      // print("终点${(progress.radius - progress.strokeWidth) * 4 / 5}");
 
       Point point1 = Point(0, (progress.radius - progress.strokeWidth) * 3 / 4);
       Point point2 = Point(0, (progress.radius - progress.strokeWidth) * 0.846);
 
       double distance = calculateDistance(point1, point2);
-      print('两个点之间的距离是: $distance');
+      // print('两个点之间的距离是: $distance');
 
       canvas.drawLine(
           Offset(0, (progress.radius - progress.strokeWidth) * 3 / 4), // 内侧的点
@@ -214,6 +231,8 @@ class Point {
 ///小点的个数[dotCount] 样式[style] 完成后的显示文字[completeText]
 class Progress {
   double value = 0.5;
+  double calculateSpeed = 100; // 最大是200km/h
+
   Color color = Colors.green;
   Color backgroundColor = Colors.red;
   double radius = 1.0;
@@ -223,6 +242,7 @@ class Progress {
   String completeText = "OK";
 
   Progress({required this.value,
+            required this.calculateSpeed,
             required this.color,
     required this.backgroundColor,
     required this.radius,

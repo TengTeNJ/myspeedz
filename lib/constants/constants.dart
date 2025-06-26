@@ -221,8 +221,8 @@ class Constants {
   static String kTcpIPAdress = '10.10.100.254';
   static int kTcpPort = 12345;
 }
-const kDataBaseTableName = 'ball_table'; // 数据库的表名(捡球数量)
-const kDataBasePickupBallTimeTableName = 'ball_time_table'; //数据库的表名(捡球时间)
+const kDataBaseTableName = 'solo_data_table'; // 数据库的表名(solo的数据)
+const kDataBaseBattleListTableName = 'battle_data_table'; //数据库的表名(battle的数据)
 
 const kDataFrameHeader = 0xA5; // 数据帧头
 const kDataFrameFoot = 0xAA; // 数据帧尾

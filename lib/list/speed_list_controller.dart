@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:my_speedz/list/speed_list_view.dart';
+import 'package:my_speedz/models/solo_speed_model.dart';
 import 'package:my_speedz/models/speed_model.dart';
 import 'package:my_speedz/view/solo_battle_switch_view.dart';
 
 import '../constants/constants.dart';
+import '../utils/data_base.dart';
 import '../utils/navigator_util.dart';
 class SpeedListController extends StatefulWidget {
   const SpeedListController({super.key});
@@ -13,13 +15,23 @@ class SpeedListController extends StatefulWidget {
 }
 
 class _SpeedListControllerState extends State<SpeedListController> {
-  List<SpeedModel> data = [
-    SpeedModel('Default','80 Km/h'),
-    SpeedModel('Default','80 Km/h'),
-    SpeedModel('Default','80 Km/h'),
-    SpeedModel('Default','80 Km/h'),
-    SpeedModel('Default','80 Km/h'),
-  ];
+  List<SoloSpeedModel> datalist = [];
+
+  /// 获取存储的数据
+  void getStorageData() async {
+    final list = await DataBaseHelper().getData(kDataBaseTableName);
+    if (list.length > 0) {
+      datalist = list;
+      setState(() {});
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getStorageData();
+  }
   
   @override
   Widget build(BuildContext context) {
@@ -104,7 +116,7 @@ class _SpeedListControllerState extends State<SpeedListController> {
               Container(
                 margin: EdgeInsets.only(left: 24,right: 24,top: 0),
                 height: Constants.screenHeight(context) -200,
-                child: SpeedListView(datas: data),
+                child: SpeedListView(datas: datalist),
               ),
               SizedBox(height: 10,),
 

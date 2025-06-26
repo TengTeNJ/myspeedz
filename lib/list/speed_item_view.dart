@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:my_speedz/models/solo_speed_model.dart';
 import 'package:my_speedz/models/speed_model.dart';
 
 import '../constants/constants.dart';
 
 class SpeedItemView extends StatefulWidget {
-  SpeedModel model;
+  SoloSpeedModel model;
 
   SpeedItemView({required this.model});
 
@@ -42,13 +43,13 @@ class _SpeedItemViewState extends State<SpeedItemView> {
                   ),
 
                   SizedBox(width: 4,),
-                  Constants.regularWhiteTextWidget('${widget.model.userName}', 16, Colors.white),
+                  Constants.regularWhiteTextWidget('${widget.model.name}', 16, Colors.white),
                 ],
               ),
             ),
             Container(
                 margin: EdgeInsets.only(right: 17),
-                child: Constants.regularWhiteTextWidget('${widget.model.speedValue}', 16, Colors.white)
+                child: Constants.regularWhiteTextWidget('${widget.model.speedData} Km/h', 16, Colors.white)
             ),
           ],
 
