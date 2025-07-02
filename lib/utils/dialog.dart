@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:my_speedz/view/ble_list_view.dart';
 
 import '../constants/constants.dart';
+import '../models/ble_model.dart';
+import 'ble_util.dart';
+import 'blue_tooth_manager.dart';
 import 'color.dart';
 import 'navigator_util.dart';
 
@@ -59,7 +62,13 @@ class _BLEListDialogState extends State<BLEListDialog> {
               child: GestureDetector(
                 behavior: HitTestBehavior.opaque,
                 onTap: () async {
-                  print('断开连接 break');
+                  if (BluetoothManager().hasConnectedDeviceList.length == 1) {
+                    BLEModel model =
+                    BluetoothManager().hasConnectedDeviceList[0];
+                    BluetoothManager().disconnectDevice(model);
+                  } else {
+                    print('未有连接蓝牙设备');
+                  }
 
                 },
                 child: Row(
@@ -86,7 +95,7 @@ class _BLEListDialogState extends State<BLEListDialog> {
                 behavior: HitTestBehavior.opaque,
                 onTap: () async {
                   print('begain scan');
-                  // BleUtil.begainScan(context);
+                  BleUtil.begainScan(context);
                 },
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
