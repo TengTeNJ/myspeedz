@@ -3,8 +3,9 @@ import '../constants/constants.dart';
 
 class BattleDataView extends StatefulWidget {
   double speedData;
+  double greenSpeedData;
 
-  BattleDataView({required this.speedData});
+  BattleDataView({required this.speedData, required this.greenSpeedData});
 
   @override
   State<BattleDataView> createState() => _BattleDataViewState();
@@ -91,7 +92,7 @@ class _BattleDataViewState extends State<BattleDataView> {
                   SizedBox(width: 10,),
 
 
-                  Text('70',
+                  Text('${widget.greenSpeedData.toStringAsFixed(0)}',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontFamily: 'tengxun',

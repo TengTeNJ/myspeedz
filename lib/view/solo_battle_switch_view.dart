@@ -7,7 +7,7 @@ class SoloBattleSwitchView extends StatefulWidget {
   String rightTitle;
   Function? selectItem;
 
-  SoloBattleSwitchView({required this.leftTitle, required this.rightTitle});
+  SoloBattleSwitchView({required this.leftTitle, required this.rightTitle,required this.selectItem});
 
   @override
   State<SoloBattleSwitchView> createState() => _SoloBattleSwitchViewState();

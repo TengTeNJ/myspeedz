@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:my_speedz/list/speed_battle_list_view.dart';
 import 'package:my_speedz/list/speed_list_view.dart';
+import 'package:my_speedz/models/battle_speed_model.dart';
 import 'package:my_speedz/models/solo_speed_model.dart';
 import 'package:my_speedz/models/speed_model.dart';
 import 'package:my_speedz/view/solo_battle_switch_view.dart';
@@ -7,6 +9,12 @@ import 'package:my_speedz/view/solo_battle_switch_view.dart';
 import '../constants/constants.dart';
 import '../utils/data_base.dart';
 import '../utils/navigator_util.dart';
+
+enum CurrentMode {
+  soloMode,// solo模式
+  battleMode // battle模式
+}
+
 class SpeedListController extends StatefulWidget {
   const SpeedListController({super.key});
 
@@ -16,12 +24,25 @@ class SpeedListController extends StatefulWidget {
 
 class _SpeedListControllerState extends State<SpeedListController> {
   List<SoloSpeedModel> datalist = [];
+  List<BattleSpeedModel> battleDatalist = [];
 
-  /// 获取存储的数据
+  CurrentMode selectedMode = CurrentMode.soloMode;
+
+
+  /// 获取存储的solo数据
   void getStorageData() async {
     final list = await DataBaseHelper().getData(kDataBaseTableName);
     if (list.length > 0) {
       datalist = list;
+      setState(() {});
+    }
+  }
+ /// 获取存储的battle 数据
+  void getStorageBattleData() async {
+    final battleList = await DataBaseHelper().getBattleData(kDataBaseBattleListTableName);
+    if (battleList.length > 0) {
+      battleDatalist = battleList;
+      print("909090${battleList}");
       setState(() {});
     }
   }
@@ -31,6 +52,7 @@ class _SpeedListControllerState extends State<SpeedListController> {
     // TODO: implement initState
     super.initState();
     getStorageData();
+    getStorageBattleData();
   }
   
   @override
@@ -91,7 +113,17 @@ class _SpeedListControllerState extends State<SpeedListController> {
                       borderRadius: BorderRadius.circular(18),
                       color: Constants.actionBGColor,
                     ),
-                    child: SoloBattleSwitchView(leftTitle: "Solo", rightTitle: "Battle"),
+                    child: SoloBattleSwitchView(leftTitle: "Solo", rightTitle: "Battle",selectItem: (index){
+                       print('45555${index}');
+                       if (index == 1) { // battle 选项卡
+                         selectedMode = CurrentMode.battleMode;
+                       } else {
+                         selectedMode = CurrentMode.soloMode;
+                       }
+                       setState(() {
+
+                       });
+                    },),
                   ),
 
                   Container(
@@ -113,10 +145,12 @@ class _SpeedListControllerState extends State<SpeedListController> {
 
 
 
+              /// List View
               Container(
                 margin: EdgeInsets.only(left: 24,right: 24,top: 0),
                 height: Constants.screenHeight(context) -200,
-                child: SpeedListView(datas: datalist),
+                child: selectedMode == CurrentMode.battleMode ? SpeedBattleListView(datas: battleDatalist)
+                : SpeedListView(datas: datalist),
               ),
               SizedBox(height: 10,),
 

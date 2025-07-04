@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:my_speedz/models/solo_speed_model.dart';
-import 'package:my_speedz/models/speed_model.dart';
 
 import '../constants/constants.dart';
 

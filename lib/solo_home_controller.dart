@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:my_speedz/models/battle_speed_model.dart';
 import 'package:my_speedz/models/solo_speed_model.dart';
 import 'package:my_speedz/routes/routes.dart';
 import 'package:my_speedz/utils/ble_util.dart';
@@ -28,9 +29,14 @@ class SoloHomeController extends StatefulWidget {
 
 class _SoloHomeControllerState extends State<SoloHomeController> {
   double progress = 0;
-  double currentSpeedValue = 0;
+  double currentSpeedValue = 0; // solo 模式下的数据
   CurrentMode selectedMode = CurrentMode.soloMode;
   Timer? _timer;
+  List battleSpeedValue = [];// battle 数据 （只存两个数据）
+  double redcalculateSpeed = 0;//battle 模式下蓝色的数据
+  double greencalculateSpeed = 0;//battle 模式下蓝色的数据
+
+  Color indicatorColor = Constants.grayIndicatirColor; /// 指示灯的颜色
 
 
  @override
@@ -50,20 +56,55 @@ class _SoloHomeControllerState extends State<SoloHomeController> {
     BluetoothManager().dataChange = (measureSpeed) {
       print("666测量到的速度${measureSpeed}");
       measuredSoeedAnimation(measureSpeed);
-      dataStorage(measureSpeed);
+      if (selectedMode == CurrentMode.soloMode) {
+        soloDataStorage(measureSpeed);
+        indicatorColor = Constants.grayIndicatirColor;
+      } else {
+        battleSpeedValue.add(measureSpeed);
+        if (battleSpeedValue.length == 2) {
+          indicatorColor = Constants.greenIndicatirColor;
+          greencalculateSpeed = measureSpeed.toDouble();
+          battleDataStorage(); // 保存该轮比赛下双方的数据
+
+
+        } else {
+          indicatorColor = Constants.redIndicatirColor;
+          redcalculateSpeed = measureSpeed.toDouble();
+          greencalculateSpeed = 0;// 清空上一轮的蓝方的数据
+
+        }
+
+        setState(() {});
+      }
     };
 
-    getStorageData();
+    getStorageSoloData();
+    getStorageBattleData();
   }
 
-  /// 数据存储
-  void dataStorage(int speed) {
+  /// solo数据存储
+  void soloDataStorage(int speed) {
     var model = SoloSpeedModel(speedData: speed.toString(), name: "Default 1");
     DataBaseHelper().insertData(kDataBaseTableName, model);
   }
 
-  /// 获取存储的数据
-  void getStorageData() async {
+  /// battle数据存储
+  void battleDataStorage() {
+    if (battleSpeedValue.length == 2) {
+      var model = BattleSpeedModel(redSpeedData: battleSpeedValue[0].toString(),
+          greenSpeedData: battleSpeedValue[1].toString(),
+          redName: "Default 1",
+          greenName: "Default 2"
+      );
+      DataBaseHelper().insertBattleData(kDataBaseBattleListTableName, model);
+      battleSpeedValue = [];// 清空数据
+
+    }
+
+  }
+
+  /// 获取存储的solo数据
+  void getStorageSoloData() async {
     final list = await DataBaseHelper().getData(kDataBaseTableName);
     if (list.length > 0) {
       var recentlyModel = list.last;
@@ -73,6 +114,13 @@ class _SoloHomeControllerState extends State<SoloHomeController> {
       setState(() {});
     }
  }
+
+ ///
+  void getStorageBattleData() async {
+    final list = await DataBaseHelper().getData(kDataBaseBattleListTableName);
+    print("6666${list}");
+
+  }
 
 
   /// 根据测量到的速度做动画
@@ -85,7 +133,7 @@ class _SoloHomeControllerState extends State<SoloHomeController> {
       if (currentSpeedValue <  measureSpeed ) {
         currentSpeedValue += 1;
         progress += 0.005;
-        print('进度${progress}');
+        // print('进度${progress}');
         setState(() {});
       }
     });
@@ -150,6 +198,8 @@ class _SoloHomeControllerState extends State<SoloHomeController> {
               margin: EdgeInsets.only(top: 30),
               child:  CircleProgressWidget(progress: Progress(value: progress,
                   calculateSpeed: currentSpeedValue,
+                  redcalculateSpeed: redcalculateSpeed,
+                  greencalculateSpeed: greencalculateSpeed,
                   color:Color.fromRGBO(46, 206, 255, 1),
                   backgroundColor: Constants.actionBGColor,
                   radius: 200, // 圆的半径
@@ -162,16 +212,14 @@ class _SoloHomeControllerState extends State<SoloHomeController> {
             ),
 
             GestureDetector(onTap: (){
-              measuredSoeedAnimation(26);
+              measuredSoeedAnimation(169);
             },
               child: Container(
                 width: 20,
                 height: 20,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
-                  color:
-                  selectedMode == CurrentMode.battleMode ?
-                  Constants.greenIndicatirColor : Constants.grayIndicatirColor ,
+                  color:indicatorColor,
                 ),
 
               ),

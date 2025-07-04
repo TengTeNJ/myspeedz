@@ -1,3 +1,4 @@
+import 'package:my_speedz/models/battle_speed_model.dart';
 import 'package:my_speedz/models/solo_speed_model.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
@@ -39,8 +40,10 @@ class DataBaseHelper{
     await db.execute('''
        CREATE TABLE ${kDataBaseBattleListTableName} (
           id INTERGER PRIMARYKEY,
-          speedData TEXT,
-          name TEXT
+          redSpeedData TEXT,
+          greenSpeedData TEXT,
+          redName TEXT,
+          greenName TEXT
        )
      ''');
   }
@@ -56,6 +59,22 @@ class DataBaseHelper{
     List<SoloSpeedModel> array = [];
     _datas.asMap().forEach((index,element){
       SoloSpeedModel model = SoloSpeedModel.modelFromJson(element);
+      array.add(model);
+    });
+    return array;
+  }
+
+  Future<int> insertBattleData(String table,BattleSpeedModel data) async {
+    Database db = await database;
+    return await db.insert(table, data.toJson());
+  }
+
+  Future<List<BattleSpeedModel>> getBattleData(String table) async {
+    Database db = await database;
+    final _datas  = await db.rawQuery('SELECT * FROM ${table}');
+    List<BattleSpeedModel> array = [];
+    _datas.asMap().forEach((index,element){
+      BattleSpeedModel model = BattleSpeedModel.modelFromJson(element);
       array.add(model);
     });
     return array;
