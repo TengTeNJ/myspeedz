@@ -33,10 +33,16 @@ class _SoloHomeControllerState extends State<SoloHomeController> {
   CurrentMode selectedMode = CurrentMode.soloMode;
   Timer? _timer;
   List battleSpeedValue = [];// battle 数据 （只存两个数据）
-  double redcalculateSpeed = 0;//battle 模式下蓝色的数据
+  double redcalculateSpeed = 0;//battle 模式下红色的数据
   double greencalculateSpeed = 0;//battle 模式下蓝色的数据
 
   Color indicatorColor = Constants.grayIndicatirColor; /// 指示灯的颜色
+  BattleSpeedModel recentlyBattleModel = BattleSpeedModel(redSpeedData: "0",
+      greenSpeedData: "0",
+      redName: "Default 1", greenName:
+      "Default 2");
+  SoloSpeedModel recentlySoloModel = SoloSpeedModel(speedData: "0", name: "Default 1");
+
 
 
  @override
@@ -65,15 +71,11 @@ class _SoloHomeControllerState extends State<SoloHomeController> {
           indicatorColor = Constants.greenIndicatirColor;
           greencalculateSpeed = measureSpeed.toDouble();
           battleDataStorage(); // 保存该轮比赛下双方的数据
-
-
         } else {
           indicatorColor = Constants.redIndicatirColor;
           redcalculateSpeed = measureSpeed.toDouble();
           greencalculateSpeed = 0;// 清空上一轮的蓝方的数据
-
         }
-
         setState(() {});
       }
     };
@@ -107,20 +109,22 @@ class _SoloHomeControllerState extends State<SoloHomeController> {
   void getStorageSoloData() async {
     final list = await DataBaseHelper().getData(kDataBaseTableName);
     if (list.length > 0) {
-      var recentlyModel = list.last;
-      print("最近的一次数据为${recentlyModel}");
+      recentlySoloModel = list.last;
+      print("最近的一次数据为${recentlySoloModel}");
       /// 获取到最近的一次数据做动画
-      measuredSoeedAnimation(int.parse(recentlyModel.speedData));
+      measuredSoeedAnimation(int.parse(recentlySoloModel.speedData));
       setState(() {});
     }
  }
 
- ///
+ /// 获取存储的battle数据
   void getStorageBattleData() async {
-    final list = await DataBaseHelper().getData(kDataBaseBattleListTableName);
-    print("6666${list}");
-
-  }
+    final list = await DataBaseHelper().getBattleData(kDataBaseBattleListTableName);
+    if (list.length > 0) {
+      recentlyBattleModel = list.last;
+      print('6666${recentlyBattleModel}');
+    }
+ }
 
 
   /// 根据测量到的速度做动画
@@ -161,8 +165,7 @@ class _SoloHomeControllerState extends State<SoloHomeController> {
                     GestureDetector(onTap: (){
                       print("蓝牙点击");
                       TTDialog.bleListDialog(context);
-
-                    },
+                      },
                       child: Container(
                         margin: EdgeInsets.only(top: 0,left: 19),
                         width: 28,
@@ -178,7 +181,6 @@ class _SoloHomeControllerState extends State<SoloHomeController> {
                     ),
 
                     Constants.boldWhiteTextWidget("Myspeedz", 22),
-
                     Container(
                       margin: EdgeInsets.only(right: 24),
                       child: Image(
@@ -265,8 +267,22 @@ class _SoloHomeControllerState extends State<SoloHomeController> {
                   GestureDetector(onTap: (){
                      if (selectedMode == CurrentMode.battleMode) {
                        selectedMode = CurrentMode.soloMode;
+                       indicatorColor = Constants.grayIndicatirColor;
+                       /// 获取最近一条solo 数据 显示
+                       currentSpeedValue = double.parse(recentlySoloModel.speedData);
+                       /// 最近的最近一条solo做动画
+                       measuredSoeedAnimation(int.parse(recentlySoloModel.speedData));
+
                      } else {
                        selectedMode = CurrentMode.battleMode;
+                       indicatorColor = Constants.redIndicatirColor;
+                       /// 获取最近一条battle 数据 显示
+                       redcalculateSpeed = double.parse(recentlyBattleModel.redSpeedData);
+                       greencalculateSpeed = double.parse(recentlyBattleModel.greenSpeedData);
+                       /// 最近的蓝色数据做动画
+                       measuredSoeedAnimation(int.parse(recentlyBattleModel.greenSpeedData));
+
+
                      }
                      setState(() {});
                    },

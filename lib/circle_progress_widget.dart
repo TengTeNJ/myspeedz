@@ -91,7 +91,8 @@ class _CircleProgressWidgetState extends State<CircleProgressWidget> {
     )
     : Stack(
     alignment: Alignment.center,
-    children: <Widget>[progress,BattleDataView(speedData: widget.progress.calculateSpeed)], /// battle 的view
+    children: <Widget>[progress,BattleDataView(speedData: widget.progress.redcalculateSpeed,
+      greenSpeedData: widget.progress.greencalculateSpeed,)], /// battle 的view
     );
   }
 }
@@ -231,7 +232,9 @@ class Point {
 ///小点的个数[dotCount] 样式[style] 完成后的显示文字[completeText]
 class Progress {
   double value = 0.5;
-  double calculateSpeed = 100; // 最大是200km/h
+  double calculateSpeed = 100;// 最大是200km/h ||  solo 模式下的数据
+  double redcalculateSpeed = 100;//battle 模式下红色的数据
+  double greencalculateSpeed = 100;//battle 模式下蓝色的数据
 
   Color color = Colors.green;
   Color backgroundColor = Colors.red;
@@ -243,6 +246,9 @@ class Progress {
 
   Progress({required this.value,
             required this.calculateSpeed,
+            required this.redcalculateSpeed,
+
+    required this.greencalculateSpeed,
             required this.color,
     required this.backgroundColor,
     required this.radius,

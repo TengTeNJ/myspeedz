@@ -192,6 +192,7 @@ class Constants {
   static Color bluetoothBGColor = Color.fromRGBO(32, 71, 209, 1);
   static Color grayIndicatirColor = Color.fromRGBO(93, 93, 93, 1);
   static Color greenIndicatirColor = Color.fromRGBO(65, 52, 249, 1);
+  static Color redIndicatirColor = Color.fromRGBO(241, 18, 18, 1);
 
 
   static Color actionBGColor = Color.fromRGBO(53, 54, 59, 1);
@@ -200,6 +201,7 @@ class Constants {
   static Color controllerBGColor = Color.fromRGBO(39, 41, 48, 1);
   static Color battleHighBGColor = Color.fromRGBO(85, 67, 200, 1);
 
+  static Color battleListHighTextColor = Color.fromRGBO(28, 235, 56, 1);
 
 
 
