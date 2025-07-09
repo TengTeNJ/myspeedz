@@ -33,7 +33,8 @@ class DataBaseHelper{
        CREATE TABLE ${kDataBaseTableName} (
           id INTERGER PRIMARYKEY,
           speedData TEXT,
-          name TEXT
+          name TEXT,
+          time TEXT
        )
      ''');
 
@@ -43,7 +44,8 @@ class DataBaseHelper{
           redSpeedData TEXT,
           greenSpeedData TEXT,
           redName TEXT,
-          greenName TEXT
+          greenName TEXT,
+          time TEXT
        )
      ''');
   }

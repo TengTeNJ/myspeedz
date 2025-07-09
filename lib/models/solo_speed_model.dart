@@ -3,15 +3,19 @@ class SoloSpeedModel {
   String speedData = '0'; // 捡球数量
   String name = ''; // 捡球日期
   String index = ''; // 索引（图表用）
+  String time = ''; // 时间（图表用）
 
 
-  SoloSpeedModel({required this.speedData,required this.name});
+
+  SoloSpeedModel({required this.speedData,required this.name,required this.time});
 
 
   factory SoloSpeedModel.modelFromJson(Map<String, dynamic> json) {
     SoloSpeedModel model =  SoloSpeedModel(
       speedData: json['speedData'] ?? '0',
       name: json['name'] ?? '0',
+      time: json['time'] ?? '0',
+
     );
     return model;
   }
@@ -21,6 +25,7 @@ class SoloSpeedModel {
         'speedData': this.speedData,
         'name': this.name,
         'id': this.id,
+        'time':this.time
       };
 
 }

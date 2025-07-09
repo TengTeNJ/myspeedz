@@ -5,6 +5,8 @@ class BattleSpeedModel {
 
   String redName = ''; // 红方名字
   String greenName = ''; // 蓝方名字
+  String time = ''; // 时间（图表用）
+
 
   String index = ''; // 索引（图表用）
 
@@ -12,7 +14,8 @@ class BattleSpeedModel {
   BattleSpeedModel({required this.redSpeedData,
                    required this.greenSpeedData,
                    required this.redName,
-                   required this.greenName});
+                   required this.greenName,
+                   required this.time });
 
 
   factory BattleSpeedModel.modelFromJson(Map<String, dynamic> json) {
@@ -21,7 +24,7 @@ class BattleSpeedModel {
       greenSpeedData: json['greenSpeedData'] ?? '0',
       redName: json['redName'] ?? '0',
       greenName: json['greenName'] ?? '0',
-
+      time: json['time'] ?? '0',
     );
     return model;
   }
@@ -33,6 +36,7 @@ class BattleSpeedModel {
         'redName': this.redName,
         'greenName': this.greenName,
         'id': this.id,
+        'time': this.time,
       };
 
 }
