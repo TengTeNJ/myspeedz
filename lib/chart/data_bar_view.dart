@@ -162,7 +162,7 @@ class _MyStatsBarChatViewState extends State<MyStatsBarChatView> {
                     yValueMapper: (SpeedModel data, _) =>
                         data.speed > 50 ? data.speed : data.speed,
                     pointColorMapper: (SpeedModel data, _) =>
-                        hexStringToColor('#F8850B'))
+                        hexStringToColor('#F11212'))
               ]),
         ),
       ],

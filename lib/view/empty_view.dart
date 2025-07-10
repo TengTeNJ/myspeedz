@@ -10,7 +10,7 @@ class EmptyView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       child: Center(
-        child: Constants.mediumBaseTextWidget('12', 16),
+        child: Constants.mediumBaseTextWidget('No Battle data available', 16),
       ),
     );
   }

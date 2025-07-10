@@ -28,9 +28,32 @@ class _MyStatsTipViewState extends State<MyStatsTipView> {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            RichText(
+            textAlign: TextAlign.center,
+            text: TextSpan(
+                text: "${widget.dataModel.speed}",
+                style: TextStyle(
+                  color:Colors.white,
+                  fontFamily: 'SanFranciscoDisplay',
+                  fontWeight: FontWeight.w700,
+                  fontSize: 20,
+                  height: 1.2,),
+                children: <TextSpan>[
+                  TextSpan(
+                    text: ' Km/h',
+                    style: TextStyle(
+                      fontFamily: 'SanFranciscoDisplay',
+                      fontWeight: FontWeight.w400,
+                      fontSize: 10,
+                      height: 1.0,
 
-            Image(image: AssetImage('images/home/red_icon.png'),width:8 ,height: 8,),
-            Constants.customTextWidget('${widget.dataModel.speed}', 20, '#E96415',fontWeight:FontWeight.w700),
+                    ),
+                  ),
+                ])),
+
+
+          // Image(image: AssetImage('images/home/red_icon.png'),width:8 ,height: 8,),
+            Constants.mediumWhiteTextWidget("${widget.dataModel.time}", 10, Color.fromRGBO(177, 177, 177, 1.0)),
             // Constants.customTextWidget('${StringUtil.stringToEnglishDate(widget.dataModel.gameTimer)}', 10, '#B1B1B1'),
             SizedBox(height: 4,)
           ],

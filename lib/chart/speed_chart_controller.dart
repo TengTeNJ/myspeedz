@@ -1,12 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:my_speedz/chart/battle_speed_stats_line_area_view.dart';
 import 'package:my_speedz/chart/switch_view.dart';
 import 'package:my_speedz/models/speed_model.dart';
 import 'package:my_speedz/utils/navigator_util.dart';
 
 import '../constants/constants.dart';
+import '../models/battle_speed_model.dart';
 import '../utils/data_base.dart';
 import '../view/solo_battle_switch_view.dart';
 import 'data_bar_view.dart';
+
+enum CurrentMode {
+  soloMode,// solo模式
+  battleMode // battle模式
+}
 
 class SpeedChartController extends StatefulWidget {
   const SpeedChartController({super.key});
@@ -21,11 +28,18 @@ class _SpeedChartControllerState extends State<SpeedChartController> {
   double maxLeft = 0;
   int maxCount = 0; // 最大进球数
 
+  CurrentMode selectedMode = CurrentMode.soloMode;
+
+  List<BattleSpeedModel> battleDatalist = [];
+
+
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     getStorageData();
+    getStorageBattleData();
 
   }
 
@@ -38,11 +52,22 @@ class _SpeedChartControllerState extends State<SpeedChartController> {
       SpeedModel model = SpeedModel("","");
       model.speed = int.parse(soloModel.speedData);
       model.indexString = i.toString();
+      model.time = soloModel.time;
       datas.add(model);
       maxLeft =  40;
     }
     setState(() {});
   }
+  /// 获取存储的battle 数据
+  void getStorageBattleData() async {
+    final battleList = await DataBaseHelper().getBattleData(kDataBaseBattleListTableName);
+    if (battleList.length > 0) {
+      battleDatalist = battleList;
+      print("909090${battleList}");
+      setState(() {});
+    }
+  }
+
 
 
 
@@ -86,21 +111,28 @@ class _SpeedChartControllerState extends State<SpeedChartController> {
                 ),
               ),
 
-
-
-
               Align(
-                alignment: Alignment.center,
+                alignment: Alignment.topLeft,
                 child: Container(
-                  margin: EdgeInsets.only(top: 32),
-                  width: 257,
+                  margin: EdgeInsets.only(top: 32,left: 24),
+                  width: 135,
                   height: 36,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(18),
                     color: Constants.actionBGColor,
                   ),
                   child: Center(
-                    child: SwitchView(leftTitle: "Solo", rightTitle: "Battle"),
+                    child: SoloBattleSwitchView(leftTitle: "Solo", rightTitle: "Battle",selectItem: (index){
+                      print('45555${index}');
+                      if (index == 1) { // battle 选项卡
+                        selectedMode = CurrentMode.battleMode;
+                      } else {
+                        selectedMode = CurrentMode.soloMode;
+                      }
+                      setState(() {
+
+                      });
+                    },),
                   ) ,
                 ),
               ),
@@ -113,7 +145,11 @@ class _SpeedChartControllerState extends State<SpeedChartController> {
                 width: Constants.screenWidth(context),
                 color: Constants.controllerBGColor,
                 height: 537 + 40,
-                child: MyStatsBarChatView(datas: datas,maxLeft: maxLeft + 0.0,maxCount: maxCount,),
+                child:
+                selectedMode == CurrentMode.soloMode ?
+                MyStatsBarChatView(datas: datas,maxLeft: maxLeft + 0.0,maxCount: maxCount,)
+                :
+                BattleSpeedStatsLineAreaView(datas: battleDatalist, aveDatas: battleDatalist, maxCount: maxCount),
               ),
 
             ]
