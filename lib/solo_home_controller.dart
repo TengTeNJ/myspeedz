@@ -10,6 +10,7 @@ import 'package:my_speedz/utils/data_base.dart';
 import 'package:my_speedz/utils/dialog.dart';
 import 'package:my_speedz/utils/navigator_util.dart';
 import 'package:my_speedz/utils/speedz_manager.dart';
+import 'package:my_speedz/utils/string_util.dart';
 
 import 'circle_progress_widget.dart';
 import 'constants/constants.dart';
@@ -36,12 +37,15 @@ class _SoloHomeControllerState extends State<SoloHomeController> {
   double redcalculateSpeed = 0;//battle 模式下红色的数据
   double greencalculateSpeed = 0;//battle 模式下蓝色的数据
 
+  String currentSpeedUnit = "Km/h"; /// 当前的速度单位
+
   Color indicatorColor = Constants.grayIndicatirColor; /// 指示灯的颜色
   BattleSpeedModel recentlyBattleModel = BattleSpeedModel(redSpeedData: "0",
       greenSpeedData: "0",
-      redName: "Default 1", greenName:
-      "Default 2");
-  SoloSpeedModel recentlySoloModel = SoloSpeedModel(speedData: "0", name: "Default 1");
+      redName: "Default 1",
+      greenName: "Default 2",
+      time: "2025"    );
+  SoloSpeedModel recentlySoloModel = SoloSpeedModel(speedData: "0", name: "Default 1",time: "14:01:02");
 
 
 
@@ -82,27 +86,38 @@ class _SoloHomeControllerState extends State<SoloHomeController> {
 
     getStorageSoloData();
     getStorageBattleData();
+
+    fetchSpeedUnitData();
   }
+
+  void fetchSpeedUnitData() async {
+    final unit = await DataBaseHelper().fetchSpeedUnitData();
+    print('666${unit}');
+
+ }
+
 
   /// solo数据存储
   void soloDataStorage(int speed) {
-    var model = SoloSpeedModel(speedData: speed.toString(), name: "Default 1");
+   var currentTime = StringUtil.currentSoloTimeString();
+    var model = SoloSpeedModel(speedData: speed.toString(), name: "Default 1",time: currentTime);
     DataBaseHelper().insertData(kDataBaseTableName, model);
   }
 
   /// battle数据存储
   void battleDataStorage() {
+    var todayTime = StringUtil.currentTimeString();
+
     if (battleSpeedValue.length == 2) {
       var model = BattleSpeedModel(redSpeedData: battleSpeedValue[0].toString(),
           greenSpeedData: battleSpeedValue[1].toString(),
           redName: "Default 1",
-          greenName: "Default 2"
+          greenName: "Default 2",
+          time:todayTime
       );
       DataBaseHelper().insertBattleData(kDataBaseBattleListTableName, model);
       battleSpeedValue = [];// 清空数据
-
     }
-
   }
 
   /// 获取存储的solo数据
@@ -214,7 +229,7 @@ class _SoloHomeControllerState extends State<SoloHomeController> {
             ),
 
             GestureDetector(onTap: (){
-              measuredSoeedAnimation(169);
+              // measuredSoeedAnimation(80);
             },
               child: Container(
                 width: 20,

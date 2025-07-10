@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../constants/constants.dart';
+import '../utils/blue_tooth_manager.dart';
+import '../utils/data_base.dart';
 
 class BattleDataView extends StatefulWidget {
   double speedData;
@@ -68,12 +70,15 @@ class _BattleDataViewState extends State<BattleDataView> {
 
             /// 80   |   70
             Container(
+              // color: Colors.red,
               margin: EdgeInsets.only(left: 10,right: 10),
               child:Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text('${widget.speedData.toStringAsFixed(0)}',
+
+                  Text('${BluetoothManager().currentSpeedUnit == "Km/h" ? widget.speedData.toStringAsFixed(0)
+                      : (widget.speedData * 0.621371).toStringAsFixed(0)}',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontFamily: 'tengxun',
@@ -92,7 +97,8 @@ class _BattleDataViewState extends State<BattleDataView> {
                   SizedBox(width: 10,),
 
 
-                  Text('${widget.greenSpeedData.toStringAsFixed(0)}',
+                  Text('${BluetoothManager().currentSpeedUnit == "Km/h" ? widget.greenSpeedData.toStringAsFixed(0)
+                      : (widget.greenSpeedData * 0.621371).toStringAsFixed(0)}',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontFamily: 'tengxun',
@@ -112,20 +118,32 @@ class _BattleDataViewState extends State<BattleDataView> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Constants.mediumWhiteTextWidget("Km/h", 30, Colors.white),
-                  SizedBox(width: 6,),
+                  Constants.mediumWhiteTextWidget("${BluetoothManager().currentSpeedUnit}", 30, Colors.white),
+                  GestureDetector(onTap: (){
+                    if (BluetoothManager().currentSpeedUnit == "Km/h") {
+                      BluetoothManager().currentSpeedUnit = "Mp/h";
+                      DataBaseHelper().saveSpeedUnitData("Mp/h");
+                      print("切换速度单位${BluetoothManager().currentSpeedUnit}");
+                    } else {
+                      BluetoothManager().currentSpeedUnit = "Km/h";
+                      DataBaseHelper().saveSpeedUnitData("Km/h");
+                      print("切换速度单位${BluetoothManager().currentSpeedUnit}");
+                    }
+                    setState(() {});
+                  },
+                    child: Container(
+                      // color: Colors.red,
+                        child: Padding(padding: EdgeInsets.all(10),
+                          child: Image(
+                            fit: BoxFit.cover,
+                            width:12,
+                            height: 7,
+                            image: AssetImage('images/home/arrow_icon.png'),
+                          ),
 
-                  Container(
-                    // color:  Constants.darkControllerColor,
-                    // width: 20,
-                    // height: 20,
-                    child: Image(
-                      fit: BoxFit.contain,
-                      width:12,
-                      height: 7,
-                      image: AssetImage('images/home/arrow_icon.png'),
+                        )
                     ),
-                  ),
+                  )
                 ],
               ),
             ),

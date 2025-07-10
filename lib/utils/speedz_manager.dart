@@ -9,6 +9,8 @@ class SpeedzManager {
 
   SpeedzManager._sharedInstance();
 
+
+
   Function(int measuredSpeed)? dataChange;
 
   // _triggerCallback({int  measuredSpeed = 0 }) {

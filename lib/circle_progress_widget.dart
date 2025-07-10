@@ -2,6 +2,8 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:my_speedz/solo_home_controller.dart';
+import 'package:my_speedz/utils/blue_tooth_manager.dart';
+import 'package:my_speedz/utils/data_base.dart';
 import 'package:my_speedz/view/battle_data_view.dart';
 
 import 'constants/constants.dart';
@@ -66,11 +68,85 @@ class _CircleProgressWidgetState extends State<CircleProgressWidget> {
             ]));
 
    var margin = SizedBox(height: 44,);
+
+   var speedValue = RichText(
+       textAlign: TextAlign.left,
+       text: TextSpan(
+           text: txt,
+           style: TextStyle(
+             color:Colors.white,
+             fontFamily: 'tengxun',
+             fontWeight: FontWeight.w400,
+             fontSize: 100,
+             height: 1.2,),
+           children: <TextSpan>[
+             // TextSpan(
+             //   text: '\nKm/h',
+             //   style: TextStyle(
+             //     fontFamily: 'SanFranciscoDisplay',
+             //     fontWeight: FontWeight.w500,
+             //     fontSize: 30,
+             //     height: 1.0,
+             //
+             //   ),
+             // ),
+           ])
+   );
+
+   var column = Column(
+       mainAxisAlignment: MainAxisAlignment.center,
+       crossAxisAlignment: CrossAxisAlignment.center,
+       children: [
+        Text(BluetoothManager().currentSpeedUnit == "Km/h" ? txt
+            : (double.parse(txt) * 0.621371).toStringAsFixed(0),
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontFamily: 'tengxun',
+            color: Colors.white,
+            fontSize: 90,
+          ),
+        ),
+        Row(
+         mainAxisAlignment: MainAxisAlignment.center,
+         crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Constants.mediumWhiteTextWidget("${BluetoothManager().currentSpeedUnit}", 30, Colors.white),
+          // SizedBox(width: 6,),
+          GestureDetector(onTap: (){
+               if (BluetoothManager().currentSpeedUnit == "Km/h") {
+                 BluetoothManager().currentSpeedUnit = "Mp/h";
+                 DataBaseHelper().saveSpeedUnitData("Mp/h");
+                 print("切换速度单位${BluetoothManager().currentSpeedUnit}");
+               } else {
+                 BluetoothManager().currentSpeedUnit = "Km/h";
+                 DataBaseHelper().saveSpeedUnitData("Km/h");
+                 print("切换速度单位${BluetoothManager().currentSpeedUnit}");
+               }
+               setState(() {});
+               },
+           child: Container(
+             // color: Colors.red,
+             child: Padding(padding: EdgeInsets.all(10),
+               child: Image(
+                 fit: BoxFit.cover,
+                 width:12,
+                 height: 7,
+                 image: AssetImage('images/home/arrow_icon.png'),
+               ),
+
+             )
+           ),
+          )
+        ],
+         ),
+         ]
+      );
+
    var row = Row(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        SizedBox(height: 144,),
+        // SizedBox(height: 144,),
         Constants.mediumWhiteTextWidget("Km/h", 30, Colors.white),
         SizedBox(width: 6,),
         Container(
@@ -86,7 +162,7 @@ class _CircleProgressWidgetState extends State<CircleProgressWidget> {
 
     return widget.mode == CurrentMode.soloMode ?  Stack(
       alignment: Alignment.center,
-      children: <Widget>[progress,rich], /// solo 的view
+      children: <Widget>[progress,column], /// solo 的view
 
     )
     : Stack(
