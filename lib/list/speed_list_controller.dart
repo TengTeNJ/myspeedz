@@ -130,7 +130,7 @@ class _SpeedListControllerState extends State<SpeedListController> {
                   GestureDetector(onTap: (){
                      print("排序");
                      if (selectedMode == CurrentMode.soloMode) {
-                       datalist.sort((a,b) =>  b.speedData.compareTo(a.speedData));
+                       datalist.sort((a,b) =>  int.parse(b.speedData).compareTo(int.parse(a.speedData)));
                        setState(() {});
                        Vibration.vibrate(duration: 500);
                      }
@@ -147,7 +147,8 @@ class _SpeedListControllerState extends State<SpeedListController> {
                       height: 19.72,
                       image: AssetImage('images/home/sort_icon.png'),
                     ),
-                  ),)
+                  ),
+                  ),
 
 
                 ],
