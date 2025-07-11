@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:my_speedz/models/speed_model.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import '../constants/constants.dart';
+import '../utils/blue_tooth_manager.dart';
 import '../utils/color.dart';
 import 'my_stats_tip_view.dart';
 
@@ -160,7 +161,8 @@ class _MyStatsBarChatViewState extends State<MyStatsBarChatView> {
                     xValueMapper: (SpeedModel data, _) =>
                         int.parse(data.indexString),
                     yValueMapper: (SpeedModel data, _) =>
-                        data.speed > 50 ? data.speed : data.speed,
+         BluetoothManager().currentSpeedUnit == "Km/h" ? data.speed
+        : (data.speed * 0.621371).toInt(),
                     pointColorMapper: (SpeedModel data, _) =>
                         hexStringToColor('#F11212'))
               ]),

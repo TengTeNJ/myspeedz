@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:my_speedz/models/speed_model.dart';
 
 import '../constants/constants.dart';
+import '../utils/blue_tooth_manager.dart';
 
 
 class MyStatsTipView extends StatefulWidget {
@@ -31,7 +32,8 @@ class _MyStatsTipViewState extends State<MyStatsTipView> {
             RichText(
             textAlign: TextAlign.center,
             text: TextSpan(
-                text: "${widget.dataModel.speed}",
+                text: "${ BluetoothManager().currentSpeedUnit == "Km/h" ? widget.dataModel.speed
+                    : (widget.dataModel.speed * 0.621371).toInt()}",
                 style: TextStyle(
                   color:Colors.white,
                   fontFamily: 'SanFranciscoDisplay',
@@ -40,7 +42,7 @@ class _MyStatsTipViewState extends State<MyStatsTipView> {
                   height: 1.2,),
                 children: <TextSpan>[
                   TextSpan(
-                    text: ' Km/h',
+                    text: ' ${BluetoothManager().currentSpeedUnit}',
                     style: TextStyle(
                       fontFamily: 'SanFranciscoDisplay',
                       fontWeight: FontWeight.w400,
@@ -52,9 +54,7 @@ class _MyStatsTipViewState extends State<MyStatsTipView> {
                 ])),
 
 
-          // Image(image: AssetImage('images/home/red_icon.png'),width:8 ,height: 8,),
             Constants.mediumWhiteTextWidget("${widget.dataModel.time}", 10, Color.fromRGBO(177, 177, 177, 1.0)),
-            // Constants.customTextWidget('${StringUtil.stringToEnglishDate(widget.dataModel.gameTimer)}', 10, '#B1B1B1'),
             SizedBox(height: 4,)
           ],
         ),

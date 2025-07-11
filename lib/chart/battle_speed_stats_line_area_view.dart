@@ -3,6 +3,7 @@ import 'package:my_speedz/models/battle_speed_model.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 import '../constants/constants.dart';
+import '../utils/blue_tooth_manager.dart';
 import '../view/empty_view.dart';
 
 class BattleSpeedStatsLineAreaView extends StatefulWidget {
@@ -113,7 +114,8 @@ class _BattleSpeedStatsLineAreaViewState extends State<BattleSpeedStatsLineAreaV
               dataSource: widget.datas,
               pointColorMapper: (BattleSpeedModel data, _) => Color.fromRGBO(241,18,18,1.0),
               xValueMapper: (BattleSpeedModel data, _) => data.time,
-              yValueMapper: (BattleSpeedModel data, _) => double.parse(data.redSpeedData)),
+              yValueMapper: (BattleSpeedModel data, _) => double.parse(BluetoothManager().currentSpeedUnit == "Km/h" ?data.redSpeedData
+                                 : (double.parse(data.redSpeedData) * 0.621371).toStringAsFixed(0))),
           AreaSeries(
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
@@ -137,11 +139,11 @@ class _BattleSpeedStatsLineAreaViewState extends State<BattleSpeedStatsLineAreaV
                 // 设置数据点高度
                 width: 3, // 设置数据点宽度
               ),
-
               dataSource: widget.aveDatas,
               pointColorMapper: (BattleSpeedModel data, _) => Color.fromRGBO(65,52,249,1.0),
               xValueMapper: (BattleSpeedModel data, _) => data.time,
-              yValueMapper: (BattleSpeedModel data, _) => double.parse(data.greenSpeedData)),
+              yValueMapper: (BattleSpeedModel data, _) => double.parse(BluetoothManager().currentSpeedUnit == "Km/h" ?data.greenSpeedData
+        : (double.parse(data.greenSpeedData) * 0.621371).toStringAsFixed(0))),
 
         ],
       )

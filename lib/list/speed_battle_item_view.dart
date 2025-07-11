@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_speedz/models/battle_speed_model.dart';
 import 'package:my_speedz/models/solo_speed_model.dart';
+import 'package:my_speedz/utils/blue_tooth_manager.dart';
 
 import '../constants/constants.dart';
 
@@ -70,7 +71,9 @@ class _SpeedItemViewState extends State<SpeedBattleItemView> {
                 RichText(
                 textAlign: TextAlign.center,
                 text: TextSpan(
-                    text: widget.model.redSpeedData,
+                    //widget.model.redSpeedData
+                    text:"${BluetoothManager().currentSpeedUnit == "Km/h" ?widget.model.redSpeedData
+                     : (double.parse(widget.model.redSpeedData) * 0.621371).toStringAsFixed(0)}" ,
                     style: TextStyle(
                       color: Constants.battleListHighTextColor,
                       fontSize: 16,
@@ -80,7 +83,8 @@ class _SpeedItemViewState extends State<SpeedBattleItemView> {
                     ),
                     children: <TextSpan>[
                       TextSpan(
-                        text: '/${widget.model.greenSpeedData}',
+                        text: '/${BluetoothManager().currentSpeedUnit == "Km/h" ?widget.model.greenSpeedData
+                    : (double.parse(widget.model.greenSpeedData) * 0.621371).toStringAsFixed(0)}',
                         style: TextStyle(
                           fontFamily: 'SanFranciscoDisplay',
                           fontSize: 16,
@@ -90,7 +94,7 @@ class _SpeedItemViewState extends State<SpeedBattleItemView> {
                         ),
                       ),
                       TextSpan(
-                        text: ' Km/h',
+                        text: ' ${BluetoothManager().currentSpeedUnit}',
                         style: TextStyle(
                           fontFamily: 'SanFranciscoDisplay',
                           fontSize: 16,
