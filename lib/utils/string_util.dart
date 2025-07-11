@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:intl/intl.dart'; // 导入intl包
 
 
@@ -23,6 +25,11 @@ class StringUtil {
     DateTime now = DateTime.now();
     String formattedDate = DateFormat('HH:mm:ss').format(now);
     return formattedDate;
+  }
+  /* KMH 转换为 MPH */
+  static String kmhTransferMph(int speed) {
+    var kmh = (0.621371 * speed).toInt().toString();
+    return "${kmh}Mp/h";
   }
 
   static String dateToString(DateTime date) {

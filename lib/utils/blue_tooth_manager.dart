@@ -56,6 +56,10 @@ class BluetoothManager{
 
   int currentSpeed = 0;
 
+  /// 当前的速度单位
+  String currentSpeedUnit = "Km/h";
+
+
   Function(int measuredSpeed)? dataChange; // 测量到速度变化
 
 
@@ -75,8 +79,8 @@ class BluetoothManager{
       if (event.name.isEmpty) {
         return;
       }
-
-      if (!hasDevice(event.id) ) {
+    //  && event.name == kBLEDevice_NewName
+      if (!hasDevice(event.id) && event.name == kBLEDevice_NewName ) {
         print('蓝牙名字${event.name}');
         this.deviceList.add(BLEModel(device: event));
         deviceListLength.value = this.deviceList.length;
@@ -125,9 +129,8 @@ class BluetoothManager{
               characteristicId: Uuid.parse(kBLE_270_CHARACTERISTIC_NOTIFY_UUID),
               deviceId: model.device.id);
           model.notifyCharacteristic = notifyCharacteristic;
-        }else{
-
         }
+
 
         // 连接成功弹窗
         EasyLoading.showSuccess('Bluetooth connection successful');
@@ -141,7 +144,7 @@ class BluetoothManager{
         });
       } else if (connectionStateUpdate.connectionState ==
           DeviceConnectionState.disconnected) {
-        // EasyLoading.showError('disconected');
+          EasyLoading.showError('disconected');
 
         // BluetoothManager().disConnect?.call();
 
@@ -154,6 +157,22 @@ class BluetoothManager{
         deviceListLength.value = this.deviceList.length;
       }
     });
+  }
+
+  /*断开连接 */
+  disconnectDevice(BLEModel model) {
+    EasyLoading.showToast('Disconnected');
+    if (conectedDeviceCount.value > 0) {
+      conectedDeviceCount.value--;
+      if (conectedDeviceCount.value == 0) {
+        // 所有设备断开
+        _instance._bleListen?.cancel();
+        _instance._bleListen = null;
+        _instance._scanStream = null;
+      }
+    }
+    model.hasConected = false;
+
   }
 
   /*判断是否已经被添加设备列表*/

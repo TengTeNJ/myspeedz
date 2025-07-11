@@ -5,6 +5,7 @@ import 'package:my_speedz/models/battle_speed_model.dart';
 import 'package:my_speedz/models/solo_speed_model.dart';
 import 'package:my_speedz/models/speed_model.dart';
 import 'package:my_speedz/view/solo_battle_switch_view.dart';
+import 'package:vibration/vibration.dart';
 
 import '../constants/constants.dart';
 import '../utils/data_base.dart';
@@ -126,7 +127,16 @@ class _SpeedListControllerState extends State<SpeedListController> {
                     },),
                   ),
 
-                  Container(
+                  GestureDetector(onTap: (){
+                     print("排序");
+                     if (selectedMode == CurrentMode.soloMode) {
+                       datalist.sort((a,b) =>  b.speedData.compareTo(a.speedData));
+                       setState(() {});
+                       Vibration.vibrate(duration: 500);
+                     }
+
+                  },
+                  child: Container(
                     padding: EdgeInsets.only(right: 24),
                     color:  Constants.darkControllerColor,
                     // width: 48,
@@ -137,7 +147,8 @@ class _SpeedListControllerState extends State<SpeedListController> {
                       height: 19.72,
                       image: AssetImage('images/home/sort_icon.png'),
                     ),
-                  ),
+                  ),)
+
 
                 ],
               ),

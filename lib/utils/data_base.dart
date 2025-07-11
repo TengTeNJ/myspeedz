@@ -1,6 +1,7 @@
 import 'package:my_speedz/models/battle_speed_model.dart';
 import 'package:my_speedz/models/solo_speed_model.dart';
 import 'package:path/path.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../constants/constants.dart';
@@ -81,6 +82,19 @@ class DataBaseHelper{
     });
     return array;
   }
+
+  ///  设置 当前的速度单位
+  Future<void> saveSpeedUnitData(String currentSpeedUnit) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString('currentSpeedUnit', currentSpeedUnit);
+  }
+
+  ///  获取 当前的速度单位
+  Future<String> fetchSpeedUnitData() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('currentSpeedUnit') ?? "Km/h";
+  }
+
 
 
 }

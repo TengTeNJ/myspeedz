@@ -166,10 +166,14 @@ class Constants {
           fontFamily: 'SanFranciscoDisplay',
           fontWeight: fontWeight,
           color:hexStringToColor(color),
-
-        fontSize: fontSize),
+          fontSize: fontSize),
     );
   }
+
+  /// 为啥不能随时设置获取
+  String currentSpeedUnit = "Km/h";
+
+
 
   static Color darkThemeColor = Color.fromRGBO(38, 38, 48, 1);
   static Color darkThemeOpacityColor = Color.fromRGBO(41, 41, 54, 0.24);
@@ -232,7 +236,9 @@ const kDataFrameFoot = 0xAA; // 数据帧尾
 const kTCPDataListen = 'tcp_data_listen'; //  TCP数据监听
 
 // 蓝牙设置名字
+//const kBLEDevice_NewName = 'Myspeedz';
 const kBLEDevice_NewName = 'Myspeedz';
+
 // 新版本的digital shoots和270的蓝牙模块保持一致
 const kBLE_270_SERVICE_UUID = "ffe0";
 const kBLE_270_CHARACTERISTIC_NOTIFY_UUID = "ffe4";
@@ -251,4 +257,7 @@ const kRobotPickballCountChange =
 //机器人断链通知到连接界面
 const kRobotConnectChange =
     'robot_connect_change';
+
+const double kKmhToMphRatio = 0.621371;
+const double kMphToKmhRatio = 1.60934;
 

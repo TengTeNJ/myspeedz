@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:my_speedz/models/solo_speed_model.dart';
 
 import '../constants/constants.dart';
+import '../utils/blue_tooth_manager.dart';
 
 class SpeedItemView extends StatefulWidget {
   SoloSpeedModel model;
@@ -48,7 +49,9 @@ class _SpeedItemViewState extends State<SpeedItemView> {
             ),
             Container(
                 margin: EdgeInsets.only(right: 17),
-                child: Constants.regularWhiteTextWidget('${widget.model.speedData} Km/h', 16, Colors.white)
+
+                child: Constants.regularWhiteTextWidget('${BluetoothManager().currentSpeedUnit == "Km/h" ? widget.model.speedData
+                    : (double.parse(widget.model.speedData) * 0.621371).toStringAsFixed(0)} ${BluetoothManager().currentSpeedUnit}', 16, Colors.white)
             ),
           ],
 

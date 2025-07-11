@@ -7,6 +7,7 @@ class SpeedModel{
   bool selected = false; // 选中状态，用于标记数据选中
   int speed = 10; // 速度
   String indexString = '1';
+  String time = "14:02:03";
 
 
   SpeedModel(this.userName,this.speedValue);
