@@ -106,39 +106,41 @@ class _CircleProgressWidgetState extends State<CircleProgressWidget> {
             fontSize: 90,
           ),
         ),
-        Row(
-         mainAxisAlignment: MainAxisAlignment.center,
-         crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Constants.mediumWhiteTextWidget("${BluetoothManager().currentSpeedUnit}", 30, Colors.white),
-          // SizedBox(width: 6,),
-          GestureDetector(onTap: (){
-               if (BluetoothManager().currentSpeedUnit == "Km/h") {
-                 BluetoothManager().currentSpeedUnit = "Mp/h";
-                 DataBaseHelper().saveSpeedUnitData("Mp/h");
-                 print("切换速度单位${BluetoothManager().currentSpeedUnit}");
-               } else {
-                 BluetoothManager().currentSpeedUnit = "Km/h";
-                 DataBaseHelper().saveSpeedUnitData("Km/h");
-                 print("切换速度单位${BluetoothManager().currentSpeedUnit}");
-               }
-               setState(() {});
-               },
-           child: Container(
-             // color: Colors.red,
-             child: Padding(padding: EdgeInsets.all(10),
-               child: Image(
-                 fit: BoxFit.cover,
-                 width:12,
-                 height: 7,
-                 image: AssetImage('images/home/arrow_icon.png'),
-               ),
+        GestureDetector(onTap: (){
+          if (BluetoothManager().currentSpeedUnit == "Km/h") {
+            BluetoothManager().currentSpeedUnit = "Mp/h";
+            DataBaseHelper().saveSpeedUnitData("Mp/h");
+            print("切换速度单位${BluetoothManager().currentSpeedUnit}");
+          } else {
+            BluetoothManager().currentSpeedUnit = "Km/h";
+            DataBaseHelper().saveSpeedUnitData("Km/h");
+            print("切换速度单位${BluetoothManager().currentSpeedUnit}");
+          }
+          setState(() {});
+          },
+          child:Row(
 
-             )
-           ),
-          )
-        ],
-         ),
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Constants.mediumWhiteTextWidget("${BluetoothManager().currentSpeedUnit}", 30, Colors.white),
+              Container(
+                  // color: Colors.red,
+                    child: Padding(padding: EdgeInsets.all(10),
+                      child: Image(
+                        fit: BoxFit.cover,
+                        width:12,
+                        height: 7,
+                        image: AssetImage('images/home/arrow_icon.png'),
+                      ),
+
+                    )
+                ),
+            ],
+          ),
+
+        )
+
          ]
       );
 
