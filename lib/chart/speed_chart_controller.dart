@@ -44,7 +44,7 @@ class _SpeedChartControllerState extends State<SpeedChartController> {
   }
 
 
-  /// 获取存储的数据
+  /// 获取存储的solo 数据
   void getStorageData() async {
     final list = await DataBaseHelper().getData(kDataBaseTableName);
     for (int i = 0 ; i < list.length ; i++) {
@@ -129,17 +129,12 @@ class _SpeedChartControllerState extends State<SpeedChartController> {
                       } else {
                         selectedMode = CurrentMode.soloMode;
                       }
-                      setState(() {
-
-                      });
+                      setState(() {});
                     },),
                   ) ,
                 ),
               ),
-
-
               SizedBox(height: 10,),
-
               Container(
                 margin: EdgeInsets.only(top: 20),
                 width: Constants.screenWidth(context),

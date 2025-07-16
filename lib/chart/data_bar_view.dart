@@ -80,11 +80,11 @@ class _MyStatsBarChatViewState extends State<MyStatsBarChatView> {
       children: [
         Padding(
             padding:
-            EdgeInsets.only(left: 10, top: 22 ),
+            EdgeInsets.only(left: 10, top: 22),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Constants.mediumBaseTextWidget('Highest ${widget.maxCount}', 16),
+                // Constants.mediumBaseTextWidget('Highest ${widget.maxCount}', 16),
               ],
             ),
 

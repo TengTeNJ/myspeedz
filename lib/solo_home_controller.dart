@@ -39,6 +39,8 @@ class _SoloHomeControllerState extends State<SoloHomeController> {
 
   String currentSpeedUnit = "Km/h"; /// 当前的速度单位
 
+  int battleDataCount = 0; /// battle 的数据个数
+
   Color indicatorColor = Constants.grayIndicatirColor; /// 指示灯的颜色
   BattleSpeedModel recentlyBattleModel = BattleSpeedModel(redSpeedData: "0",
       greenSpeedData: "0",
@@ -65,36 +67,42 @@ class _SoloHomeControllerState extends State<SoloHomeController> {
 
     BluetoothManager().dataChange = (measureSpeed) {
       print("666测量到的速度${measureSpeed}");
-      measuredSoeedAnimation(measureSpeed);
+      /// 测量到数据红灯或者蓝灯闪一下在开始做动画
       if (selectedMode == CurrentMode.soloMode) {
         soloDataStorage(measureSpeed);
-        indicatorColor = Constants.grayIndicatirColor;
+        indicatorColor = Constants.redIndicatirColor;
+        recentlySoloModel = SoloSpeedModel(speedData: "${measureSpeed}", name: "Default 1", time: StringUtil.currentSoloTimeString());
+        setState(() {});
+        Future.delayed(Duration(milliseconds: 500),(){
+          indicatorColor = Constants.grayIndicatirColor;
+          setState(() {});
+          measuredSoeedAnimation(measureSpeed);
+        });
       } else {
         battleSpeedValue.add(measureSpeed);
         if (battleSpeedValue.length == 2) {
           indicatorColor = Constants.greenIndicatirColor;
           greencalculateSpeed = measureSpeed.toDouble();
           battleDataStorage(); // 保存该轮比赛下双方的数据
+          battleDataCount += 1;
         } else {
           indicatorColor = Constants.redIndicatirColor;
           redcalculateSpeed = measureSpeed.toDouble();
           greencalculateSpeed = 0;// 清空上一轮的蓝方的数据
         }
         setState(() {});
+        Future.delayed(Duration(milliseconds: 500),(){
+          indicatorColor = Constants.grayIndicatirColor;
+          setState(() {});
+          measuredSoeedAnimation(measureSpeed);
+        });
+
       }
     };
 
     getStorageSoloData();
     getStorageBattleData();
-
-    fetchSpeedUnitData();
   }
-
-  void fetchSpeedUnitData() async {
-    final unit = await DataBaseHelper().fetchSpeedUnitData();
-    print('666${unit}');
-
- }
 
 
   /// solo数据存储
@@ -138,6 +146,7 @@ class _SoloHomeControllerState extends State<SoloHomeController> {
     if (list.length > 0) {
       recentlyBattleModel = list.last;
       print('6666${recentlyBattleModel}');
+      battleDataCount = list.length;
     }
  }
 
@@ -268,7 +277,7 @@ class _SoloHomeControllerState extends State<SoloHomeController> {
                           child: Image(image: AssetImage('images/home/list_icon.png'),width: 20,height: 23,),
                         ),
                         SizedBox(width: 10,),
-                        Constants.regularWhiteTextWidget("20", 16, Colors.white),
+                        Constants.regularWhiteTextWidget("${battleDataCount}", 16, Colors.white),
                       ],)
                           : Center(
                         child: Image(image: AssetImage('images/home/list_icon.png'),width: 20,height: 23,),
@@ -290,7 +299,7 @@ class _SoloHomeControllerState extends State<SoloHomeController> {
 
                      } else {
                        selectedMode = CurrentMode.battleMode;
-                       indicatorColor = Constants.redIndicatirColor;
+                       // indicatorColor = Constants.redIndicatirColor;
                        /// 获取最近一条battle 数据 显示
                        redcalculateSpeed = double.parse(recentlyBattleModel.redSpeedData);
                        greencalculateSpeed = double.parse(recentlyBattleModel.greenSpeedData);
