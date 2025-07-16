@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
+import 'package:my_speedz/utils/data_base.dart';
 import 'package:my_speedz/utils/speedz_manager.dart';
 
 import '../constants/constants.dart';
@@ -80,7 +81,7 @@ class BluetoothManager{
         return;
       }
     //  && event.name == kBLEDevice_NewName
-      if (!hasDevice(event.id) && event.name == kBLEDevice_NewName ) {
+      if (!hasDevice(event.id) && event.name == kBLEDevice_NewName) {
         print('蓝牙名字${event.name}');
         this.deviceList.add(BLEModel(device: event));
         deviceListLength.value = this.deviceList.length;
@@ -144,9 +145,13 @@ class BluetoothManager{
         });
       } else if (connectionStateUpdate.connectionState ==
           DeviceConnectionState.disconnected) {
-          EasyLoading.showError('disconected');
+          EasyLoading.showError('disconected',duration: Duration(milliseconds: 5000));
+          /// 断链删除数据
+          DataBaseHelper().deleteData(kDataBaseTableName, "0");
+          DataBaseHelper().deleteData(kDataBaseBattleListTableName, "0");
 
-        // BluetoothManager().disConnect?.call();
+
+          // BluetoothManager().disConnect?.call();
 
         if(conectedDeviceCount.value > 0){
           conectedDeviceCount.value--;
@@ -183,31 +188,32 @@ class BluetoothManager{
   }
 
   listenBLEStatu() {
-    // if (_bleStatuListen == null) {
-    //   _bleStatuListen = FlutterReactiveBle().statusStream.listen((status) {
-    //     print('蓝牙状态status===${status}');
-    //     GameUtil gameUtil = GetIt.instance<GameUtil>();
-    //     gameUtil.bleStatus = status;
-    //     if (status == BleStatus.poweredOff) {
-    //       // 蓝牙开关关闭
-    //       _instance._bleListen?.cancel();
-    //       _instance._bleListen = null;
-    //       _instance._scanStream = null;
-    //       _instance.disConnect?.call();
-    //       print('蓝牙关闭');
-    //     } else if (status == BleStatus.locationServicesDisabled) {
-    //       // 安卓位置权限不允许
-    //     } else if (status == BleStatus.unauthorized) {
-    //       // 未授权蓝牙权限
-    //     } else if (status == BleStatus.ready) {
-    //       _instance.openBlueTooth?.call();
-    //       Future.delayed(Duration(milliseconds: 100),(){
-    //         startNewScan();
-    //       });
-    //
-    //     }
-    //   });
-    // }
+    if (_bleStatuListen == null) {
+      _bleStatuListen = FlutterReactiveBle().statusStream.listen((status) {
+        print('蓝牙状态status===${status}');
+        // GameUtil gameUtil = GetIt.instance<GameUtil>();
+        // gameUtil.bleStatus = status;
+        if (status == BleStatus.poweredOff) {
+          // 蓝牙开关关闭
+          _instance._bleListen?.cancel();
+          _instance._bleListen = null;
+          _instance._scanStream = null;
+          // _instance.disConnect?.call();
+          print('蓝牙关闭');
+        } else if (status == BleStatus.locationServicesDisabled) {
+          // 安卓位置权限不允许
+        } else if (status == BleStatus.unauthorized) {
+          // 未授权蓝牙权限
+        } else if (status == BleStatus.ready) {
+          // _instance.openBlueTooth?.call();
+          print('蓝牙打开');
+          Future.delayed(Duration(milliseconds: 100),(){
+            startNewScan();
+          });
+
+        }
+      });
+    }
   }
 
 }

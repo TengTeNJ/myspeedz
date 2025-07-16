@@ -83,6 +83,11 @@ class DataBaseHelper{
     return array;
   }
 
+  Future<int> deleteData(String table, String id) async {
+    Database db = await database;
+    return await db.delete(table, where: 'id = ?', whereArgs: [id]);
+  }
+
   ///  设置 当前的速度单位
   Future<void> saveSpeedUnitData(String currentSpeedUnit) async {
     final prefs = await SharedPreferences.getInstance();
