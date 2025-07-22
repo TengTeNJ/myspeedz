@@ -62,6 +62,8 @@ class BluetoothManager{
 
 
   Function(int measuredSpeed)? dataChange; // 测量到速度变化
+  Function()? disConnect; // 机器人断链
+
 
 
   /*开始扫描*/
@@ -151,7 +153,7 @@ class BluetoothManager{
           DataBaseHelper().deleteData(kDataBaseBattleListTableName, "0");
 
 
-          // BluetoothManager().disConnect?.call();
+          BluetoothManager().disConnect?.call();
 
         if(conectedDeviceCount.value > 0){
           conectedDeviceCount.value--;

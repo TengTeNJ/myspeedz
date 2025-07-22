@@ -11,6 +11,21 @@ class BleListView extends StatefulWidget {
 }
 
 class _BleListViewState extends State<BleListView> {
+
+  void listener() {
+    print('弹窗搜索到蓝牙设备有变化');
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    BluetoothManager().deviceListLength.addListener(listener);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
