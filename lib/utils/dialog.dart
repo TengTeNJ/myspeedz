@@ -127,7 +127,7 @@ class _BLEListDialogState extends State<BLEListDialog> {
               },
               child: Container(
                 child: Center(
-                  child: Constants.regularWhiteTextWidget("Cancle", 16, Colors.white),
+                  child: Constants.regularWhiteTextWidget("Cancel", 16, Colors.white),
 
                 ),
                 decoration: BoxDecoration(
