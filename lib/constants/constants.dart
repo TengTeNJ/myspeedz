@@ -170,6 +170,26 @@ class Constants {
     );
   }
 
+  static Text tengxunBoldWhiteTextWidget(String text, double fontSize,
+      {int? maxLines,
+        TextAlign textAlign = TextAlign.center,
+        double height = 1.0,
+        bool isHighlight = false ,
+      }) {
+    return Text(
+      textAlign: textAlign,
+      maxLines: maxLines,
+      text,
+      style: TextStyle(
+        height: height,
+        fontFamily: 'tengxun',
+        fontWeight: FontWeight.bold,
+        color: isHighlight == true ? Color.fromRGBO(21, 233, 120, 1.0) :  Colors.white,
+        fontSize: fontSize,
+      ),
+    );
+  }
+
   /// 为啥不能随时设置获取
   String currentSpeedUnit = "Km/h";
 
@@ -207,6 +227,9 @@ class Constants {
 
   static Color battleListHighTextColor = Color.fromRGBO(28, 235, 56, 1);
 
+  static Color battleProgressRedColor =Color.fromRGBO(248, 117, 3, 1);
+  static Color battleProgressGreenColor =Color.fromRGBO(46, 206, 255, 1);
+
 
 
 
@@ -227,6 +250,13 @@ class Constants {
   static String kTcpIPAdress = '10.10.100.254';
   static int kTcpPort = 12345;
 }
+
+
+enum CurrentMode {
+  soloMode,// solo模式
+  battleMode // battle模式
+}
+
 const kDataBaseTableName = 'solo_data_table'; // 数据库的表名(solo的数据)
 const kDataBaseBattleListTableName = 'battle_data_table'; //数据库的表名(battle的数据)
 
@@ -245,6 +275,9 @@ const kBLE_270_CHARACTERISTIC_NOTIFY_UUID = "ffe4";
 const kBLE_270_CHARACTERISTIC_WRITER_UUID = "2A6F";
 
 /// 数据回调
+///
+/// 测量到新的速度
+const kSpeedzNewSpeed = 'speedz_calculate_new_data';
 /// 跳转到捡球界面
 const KJumpPickPage =
     'robot_jump_pick_page';
@@ -257,6 +290,10 @@ const kRobotPickballCountChange =
 //机器人断链通知到连接界面
 const kRobotConnectChange =
     'robot_connect_change';
+
+const kInitiativeDisconnectFive = 'initiative_disconnect_five'; // 主动断开
+const kConnectSuccess = 'device_connect_success'; // 连接成功
+
 
 const double kKmhToMphRatio = 0.621371;
 const double kMphToKmhRatio = 1.60934;

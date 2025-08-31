@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:my_speedz/solo_home_controller.dart';
@@ -266,11 +267,41 @@ class ProgressPainter extends CustomPainter {
         ..strokeWidth = progress.strokeWidth
         ..color = progress.backgroundColor
         ..strokeCap = StrokeCap.round;
+
       if (i * (360 / num) <= progress.value * 360) {
-        paint123..color = progress.color;
+       paint123..color = progress.color;
+       //  paint123 .shader = ui.Gradient.linear(
+       //      Offset(0, (progress.radius - progress.strokeWidth) * 3 / 4),           // 起始点
+       //      Offset(0, (progress.radius - progress.strokeWidth) * 0.846),         // 结束点
+       //      [
+       //        Color.fromRGBO(248, 117, 3, 1.0),
+       //        Color.fromRGBO(245, 90, 21, 1.0),
+       //        // Color.fromRGBO(0, 117, 3, 1.0),
+       //
+       //      ],
+       //      [0.0, 10.0],                   // 颜色停靠点（可选）
+       //      TileMode.clamp);
+       //  paint123
+       //    ..strokeWidth = progress.strokeWidth
+       //    // ..color = progress.backgroundColor
+       //    ..strokeCap = StrokeCap.round;
       }
-      // print("起始点${(progress.radius - progress.strokeWidth) * 3 / 4}");
-      // print("终点${(progress.radius - progress.strokeWidth) * 4 / 5}");
+      // else {
+      //   paint123
+      //     ..strokeWidth = progress.strokeWidth
+      //     ..color = progress.backgroundColor
+      //     ..strokeCap = StrokeCap.round;
+      //   paint123 .shader = ui.Gradient.linear(
+      //       Offset(0, (progress.radius - progress.strokeWidth) * 3 / 4),           // 起始点
+      //       Offset(0, (progress.radius - progress.strokeWidth) * 0.846),         // 结束点
+      //       [
+      //         Constants.actionBGColor,
+      //         Constants.actionBGColor,
+      //       ],
+      //       [0.0, 10.0], // 颜色停靠点（可选）
+      //       TileMode.clamp);
+      // }
+
 
       Point point1 = Point(0, (progress.radius - progress.strokeWidth) * 3 / 4);
       Point point2 = Point(0, (progress.radius - progress.strokeWidth) * 0.846);

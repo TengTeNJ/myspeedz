@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:my_speedz/utils/blue_tooth_manager.dart';
 
 import '../constants/constants.dart';
+import '../utils/event_bus.dart';
 
 class BleListView extends StatefulWidget {
   const BleListView({super.key});
@@ -11,11 +14,15 @@ class BleListView extends StatefulWidget {
 }
 
 class _BleListViewState extends State<BleListView> {
+  late StreamSubscription subscription;
+  Color nameColor = Colors.white; /// 设备名字的颜色
+
 
   void listener() {
     print('弹窗搜索到蓝牙设备有变化');
     if (mounted) {
       setState(() {});
+
     }
   }
 
@@ -24,6 +31,16 @@ class _BleListViewState extends State<BleListView> {
     // TODO: implement initState
     super.initState();
     BluetoothManager().deviceListLength.addListener(listener);
+    subscription = EventBus().stream.listen((event) {
+      if (event == kInitiativeDisconnectFive) {
+         print("断开连接了");
+         nameColor = Constants.grayTextColor;
+         setState(() {});
+      } else if(event == kConnectSuccess) {
+        nameColor = Color.fromRGBO(28, 235, 56, 1.0);
+        setState(() {});
+      }
+    });
   }
 
   @override
@@ -63,7 +80,12 @@ class _BleListViewState extends State<BleListView> {
                           BluetoothManager()
                               .showDeviceList[index]
                               .device.name,
-                          16,Colors.white
+                          16, BluetoothManager()
+                                .showDeviceList[index]
+                                .hasConected ==
+                                 true ?
+                          Color.fromRGBO(28, 235, 56, 1.0)
+                            : nameColor
                         )
                       ],
                     )),

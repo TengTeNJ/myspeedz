@@ -55,9 +55,13 @@ class _BattleDataViewState extends State<BattleDataView> {
                           fit: BoxFit.contain,
                           width:14.24,
                           height: 17.26,
-                          image: AssetImage('images/home/green_icon.png'),
+                          image: widget.greenSpeedData == 0 ?AssetImage('images/home/gray_icon.png')   :
+                           AssetImage('images/home/green_icon.png'),
                         ),
                       ),
+                      widget.greenSpeedData == 0 ?
+                      Constants.regularWhiteTextWidget("Default 2", 16, Constants.grayTextColor)
+                      :
                       Constants.regularWhiteTextWidget("Default 2", 16, Constants.typeTextColor),
 
                     ],
@@ -69,47 +73,51 @@ class _BattleDataViewState extends State<BattleDataView> {
 
 
             /// 80   |   70
-            Container(
-              // color: Colors.red,
-              margin: EdgeInsets.only(left: 10,right: 10),
-              child:Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
+           Center(
+             child:Container(
+               // color: Colors.red,
+               margin: EdgeInsets.only(left: 10,right: 10),
+               child:Row(
+                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                 crossAxisAlignment: CrossAxisAlignment.center,
+                 children: [
 
-                  Text('${BluetoothManager().currentSpeedUnit == "Km/h" ? widget.speedData.toStringAsFixed(0)
-                      : (widget.speedData * 0.621371).toStringAsFixed(0)}',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontFamily: 'tengxun',
-                      color: Colors.white,
-                      fontSize: 70,
-                    ),
-                  ),
+                   Text('${BluetoothManager().currentSpeedUnit == "Km/h" ? widget.speedData.toStringAsFixed(0)
+                       : (widget.speedData * 0.621371).toStringAsFixed(0)}',
+                     textAlign: TextAlign.center,
+                     style: TextStyle(
+                       fontFamily: 'tengxun',
+                       color: Colors.white,
+                       fontSize: 70,
+                     ),
+                   ),
 
-                  SizedBox(width: 10,),
-                  Container(
-                    width: 0.5,
-                    height: 30,
-                    color: Colors.white,
-                  ),
+                   SizedBox(width: 10,),
+                   Container(
+                     width: 0.5,
+                     height: 30,
+                     color: Colors.white,
+                   ),
 
-                  SizedBox(width: 10,),
+                   SizedBox(width: 10,),
 
 
-                  Text('${BluetoothManager().currentSpeedUnit == "Km/h" ? widget.greenSpeedData.toStringAsFixed(0)
-                      : (widget.greenSpeedData * 0.621371).toStringAsFixed(0)}',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontFamily: 'tengxun',
-                      color: Colors.white,
-                      fontSize: 70,
-                    ),
-                  ),
+                   Text('${BluetoothManager().currentSpeedUnit == "Km/h" ? widget.greenSpeedData.toStringAsFixed(0)
+                       : (widget.greenSpeedData * 0.621371).toStringAsFixed(0)}',
+                     textAlign: TextAlign.center,
+                     style: TextStyle(
+                       fontFamily: 'tengxun',
+                       color:widget.greenSpeedData == 0 ? Constants.grayTextColor : Colors.white,
+                       fontSize: 70,
+                     ),
+                   ),
 
-                ],
-              ),
-            ),
+                 ],
+               ),
+             ),
+
+           ),
+
 
             /// km/h 箭头
             GestureDetector(onTap: (){

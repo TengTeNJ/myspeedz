@@ -3,6 +3,7 @@ import 'package:my_speedz/chart/battle_speed_stats_line_area_view.dart';
 import 'package:my_speedz/chart/switch_view.dart';
 import 'package:my_speedz/models/speed_model.dart';
 import 'package:my_speedz/utils/navigator_util.dart';
+import 'package:vibration/vibration.dart';
 
 import '../constants/constants.dart';
 import '../models/battle_speed_model.dart';
@@ -123,7 +124,8 @@ class _SpeedChartControllerState extends State<SpeedChartController> {
                   ),
                   child: Center(
                     child: SoloBattleSwitchView(leftTitle: "Solo", rightTitle: "Battle",selectItem: (index){
-                      print('45555${index}');
+                      // print('45555${index}');
+                      Vibration.vibrate(duration: 500);
                       if (index == 1) { // battle 选项卡
                         selectedMode = CurrentMode.battleMode;
                       } else {

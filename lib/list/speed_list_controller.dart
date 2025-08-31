@@ -116,6 +116,7 @@ class _SpeedListControllerState extends State<SpeedListController> {
                     ),
                     child: SoloBattleSwitchView(leftTitle: "Solo", rightTitle: "Battle",selectItem: (index){
                        print('45555${index}');
+                       Vibration.vibrate(duration: 500);
                        if (index == 1) { // battle 选项卡
                          selectedMode = CurrentMode.battleMode;
                        } else {
@@ -136,7 +137,7 @@ class _SpeedListControllerState extends State<SpeedListController> {
                      }
 
                   },
-                  child: Container(
+                  child:  selectedMode == CurrentMode.soloMode ?  Container(
                     padding: EdgeInsets.only(right: 24),
                     color:  Constants.darkControllerColor,
                     // width: 48,
@@ -147,10 +148,11 @@ class _SpeedListControllerState extends State<SpeedListController> {
                       height: 19.72,
                       image: AssetImage('images/home/sort_icon.png'),
                     ),
-                  ),
-                  ),
+                  ) :
+                     Container(
 
-
+                     )
+                  ),
                 ],
               ),
             ),
