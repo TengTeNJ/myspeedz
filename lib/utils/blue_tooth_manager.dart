@@ -9,6 +9,7 @@ import 'package:my_speedz/utils/speedz_manager.dart';
 
 import '../constants/constants.dart';
 import '../models/ble_model.dart';
+import 'event_bus.dart';
 
 
 class BluetoothManager{
@@ -59,6 +60,7 @@ class BluetoothManager{
 
   /// 当前的速度单位
   String currentSpeedUnit = "Km/h";
+  CurrentMode mode = CurrentMode.soloMode; /// 当前的测量模式
 
 
   Function(int measuredSpeed)? dataChange; // 测量到速度变化
@@ -82,7 +84,9 @@ class BluetoothManager{
       if (event.name.isEmpty) {
         return;
       }
-    //  && event.name == kBLEDevice_NewName
+      // print('蓝牙名字${event.name}');
+
+      //  && event.name == kBLEDevice_NewName
       if (!hasDevice(event.id) && event.name == kBLEDevice_NewName) {
         print('蓝牙名字${event.name}');
         this.deviceList.add(BLEModel(device: event));
@@ -137,6 +141,8 @@ class BluetoothManager{
 
         // 连接成功弹窗
         EasyLoading.showSuccess('Bluetooth connection successful');
+        EventBus().sendEvent(kConnectSuccess);
+
         // 监听数据
         Future.delayed(Duration(milliseconds: 2000),(){
           _ble.subscribeToCharacteristic(notifyCharacteristic).listen((data) {
@@ -151,7 +157,6 @@ class BluetoothManager{
           /// 断链删除数据
           DataBaseHelper().deleteData(kDataBaseTableName, "0");
           DataBaseHelper().deleteData(kDataBaseBattleListTableName, "0");
-
 
           BluetoothManager().disConnect?.call();
 
@@ -179,7 +184,7 @@ class BluetoothManager{
       }
     }
     model.hasConected = false;
-
+    EventBus().sendEvent(kInitiativeDisconnectFive);
   }
 
   /*判断是否已经被添加设备列表*/

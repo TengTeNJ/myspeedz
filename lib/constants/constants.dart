@@ -293,6 +293,7 @@ const kRobotConnectChange =
 
 const kInitiativeDisconnectFive = 'initiative_disconnect_five'; // 主动断开
 const kConnectSuccess = 'device_connect_success'; // 连接成功
+const kChangeSpeedUnitSuccess = 'change_speedunit_success'; // 切换速度单位成功
 
 
 const double kKmhToMphRatio = 0.621371;

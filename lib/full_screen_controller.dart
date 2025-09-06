@@ -13,8 +13,13 @@ import 'models/solo_speed_model.dart';
 
 class FullScreenController extends StatefulWidget {
   String recentlySoloSpeed = "0";
+
+  int recentlyBattleRedSpeed= 0 ;
+  int recentlyBattleGreenSpeed= 0 ;
   FullScreenController({
     this.recentlySoloSpeed = "",
+    this.recentlyBattleRedSpeed = 0,
+    this.recentlyBattleGreenSpeed = 0
   });
 
   @override
@@ -78,10 +83,6 @@ class _FullScreenControllerState extends State<FullScreenController> {
     });
   }
 
-
-
-
-
   /// 获取存储的solo数据
   void getStorageSoloData() async {
     final list = await DataBaseHelper().getData(kDataBaseTableName);
@@ -131,8 +132,20 @@ class _FullScreenControllerState extends State<FullScreenController> {
     // TODO: implement initState
     super.initState();
     getStorageSoloData();
-    getStorageBattleData();
+    // getStorageBattleData();
     listenDataChange();
+
+    print("对战模式红方${widget.recentlyBattleRedSpeed}");
+    print("对战模式蓝方${widget.recentlyBattleGreenSpeed}");
+    if (BluetoothManager().mode == CurrentMode.battleMode) {
+      recentlyBattleRedSpeed = widget.recentlyBattleRedSpeed;
+      recentlyBattleGreenSpeed = widget.recentlyBattleGreenSpeed;
+      print("对战数据为${battleSpeedValue}");
+      if (recentlyBattleRedSpeed != 0) {
+        battleSpeedValue.add(recentlyBattleRedSpeed);
+      }
+      setState(() {});
+    }
   }
 
   void listenDataChange() {
@@ -152,7 +165,7 @@ class _FullScreenControllerState extends State<FullScreenController> {
       }else if (BluetoothManager().mode == CurrentMode.battleMode) {
         battleSpeedValue.add(measureSpeed);
 
-        if (battleSpeedValue.length == 2) {
+        if (battleSpeedValue.length == 2 ) {
           print("全屏界面蓝方测量到的速度为${measureSpeed}");
           indicatorColor = Constants.greenIndicatirColor;
           setState(() {});
@@ -171,7 +184,7 @@ class _FullScreenControllerState extends State<FullScreenController> {
             indicatorColor = Constants.grayIndicatirColor;
             setState(() {});
           });
-
+          recentlyBattleGreenSpeed = 0;// 清空上一轮的蓝方的数据
         }
       }
       if (mounted) {

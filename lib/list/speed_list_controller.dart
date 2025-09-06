@@ -116,7 +116,7 @@ class _SpeedListControllerState extends State<SpeedListController> {
                     ),
                     child: SoloBattleSwitchView(leftTitle: "Solo", rightTitle: "Battle",selectItem: (index){
                        print('45555${index}');
-                       Vibration.vibrate(duration: 500);
+                       Vibration.vibrate(duration: 200);
                        if (index == 1) { // battle 选项卡
                          selectedMode = CurrentMode.battleMode;
                        } else {
@@ -133,7 +133,7 @@ class _SpeedListControllerState extends State<SpeedListController> {
                      if (selectedMode == CurrentMode.soloMode) {
                        datalist.sort((a,b) =>  int.parse(b.speedData).compareTo(int.parse(a.speedData)));
                        setState(() {});
-                       Vibration.vibrate(duration: 500);
+                       Vibration.vibrate(duration: 200);
                      }
 
                   },

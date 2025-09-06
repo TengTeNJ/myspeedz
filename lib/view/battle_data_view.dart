@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../constants/constants.dart';
 import '../utils/blue_tooth_manager.dart';
 import '../utils/data_base.dart';
+import '../utils/event_bus.dart';
 
 class BattleDataView extends StatefulWidget {
   double speedData;
@@ -130,6 +131,7 @@ class _BattleDataViewState extends State<BattleDataView> {
                 DataBaseHelper().saveSpeedUnitData("Km/h");
                 print("切换速度单位${BluetoothManager().currentSpeedUnit}");
               }
+              EventBus().sendEvent(kChangeSpeedUnitSuccess);
               setState(() {});
 
             },

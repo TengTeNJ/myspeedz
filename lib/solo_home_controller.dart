@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:io';
 
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:my_speedz/full_screen_controller.dart';
 import 'package:my_speedz/models/battle_speed_model.dart';
@@ -13,6 +15,8 @@ import 'package:my_speedz/utils/event_bus.dart';
 import 'package:my_speedz/utils/navigator_util.dart';
 import 'package:my_speedz/utils/speedz_manager.dart';
 import 'package:my_speedz/utils/string_util.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:vibration/vibration.dart';
 
 import 'circle_progress_widget.dart';
 import 'constants/constants.dart';
@@ -20,6 +24,11 @@ import 'constants/constants.dart';
 enum ShowBattleTopAvgMode {
   redData,// 红方数据
   greenDats // 蓝方数据
+}
+
+enum ShowBattleDataType {
+  showTopData,//  top 数据
+  showAvgData // avg数据
 }
 
 class SoloHomeController extends StatefulWidget {
@@ -61,6 +70,7 @@ class _SoloHomeControllerState extends State<SoloHomeController> {
   int battleGreenTopSpeed = 0;
   // battle 数据默认显示red 的平均数据
   ShowBattleTopAvgMode showDataMode = ShowBattleTopAvgMode.redData;
+  ShowBattleDataType showDataType = ShowBattleDataType.showTopData;
 
 
   ///
@@ -73,18 +83,20 @@ class _SoloHomeControllerState extends State<SoloHomeController> {
       time: "2025"    );
   SoloSpeedModel recentlySoloModel = SoloSpeedModel(speedData: "0", name: "Default 1",time: "14:01:02");
 
-  @override
+    @override
   void initState() {
     // TODO: implement initState
     super.initState();
+
+
     selectedMode = CurrentMode.soloMode;
+
 
     BluetoothManager();
     // 扫描蓝牙设备
     Future.delayed(Duration(milliseconds: 1000),(){
     // BluetoothManager().startNewScan();
        BleUtil.begainScan(context);
-
     });
 
     BluetoothManager().disConnect = () {
@@ -98,6 +110,9 @@ class _SoloHomeControllerState extends State<SoloHomeController> {
       if (event == kSpeedzNewSpeed) {
         getStorageSoloData();
         getStorageBattleData();
+      }  else if(event == kChangeSpeedUnitSuccess) {
+        print("首页收到单位切换通知");
+        setState(() {});
       }
     });
 
@@ -105,6 +120,7 @@ class _SoloHomeControllerState extends State<SoloHomeController> {
     getStorageSoloData();
     getStorageBattleData();
   }
+
 
   void listenDataChange() {
     BluetoothManager().dataChange = (measureSpeed) {
@@ -116,11 +132,12 @@ class _SoloHomeControllerState extends State<SoloHomeController> {
         indicatorColor = Constants.redIndicatirColor;
         recentlySoloModel = SoloSpeedModel(speedData: "${measureSpeed}", name: "Default 1", time: StringUtil.currentSoloTimeString());
         setState(() {});
-        soloDataCount += 1;
+        // soloDataCount += 1;
         Future.delayed(Duration(milliseconds: 500),(){
           indicatorColor = Constants.grayIndicatirColor;
           setState(() {});
           measuredSoeedAnimation(measureSpeed);
+          getStorageSoloData();
         });
       } else {
         battleSpeedValue.add(measureSpeed);
@@ -129,7 +146,10 @@ class _SoloHomeControllerState extends State<SoloHomeController> {
           indicatorColor = Constants.greenIndicatirColor;
           greencalculateSpeed = measureSpeed.toDouble();
           battleDataStorage(); // 保存该轮比赛下双方的数据
-          battleDataCount += 1;
+          Future.delayed(Duration(milliseconds: 200),(){
+            getStorageBattleData();
+            setState(() {});
+          });
         } else {
           progressColor =  Constants.battleProgressRedColor;
           indicatorColor = Constants.redIndicatirColor;
@@ -299,6 +319,8 @@ class _SoloHomeControllerState extends State<SoloHomeController> {
                   children: [
                     GestureDetector(onTap: (){
                       print("蓝牙点击");
+                      var language = Localizations.localeOf(context);
+                      print("语言环境为${language}");
                       TTDialog.bleListDialog(context);
                       },
                       child: Container(
@@ -318,12 +340,27 @@ class _SoloHomeControllerState extends State<SoloHomeController> {
                     Constants.boldWhiteTextWidget("Myspeedz", 22),
 
                     GestureDetector(onTap: (){
-                      NavigatorUtil.push(Routes.fullScreen).then((value){
-                          listenDataChange(); // 刷新数据监听
-                          getStorageSoloData();
-                          getStorageBattleData();
+                      // NavigatorUtil.push(Routes.fullScreen).then((value){
+                      //     listenDataChange(); // 刷新数据监听
+                      //     getStorageSoloData();
+                      //     getStorageBattleData();
+                      // });
+                      battleSpeedValue = [];
+
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => FullScreenController(
+                              recentlyBattleRedSpeed: redcalculateSpeed.toInt(),
+                              recentlyBattleGreenSpeed: greencalculateSpeed.toInt(),
+                            )), // 力量训练页面
+                      ).then((value){
+                        listenDataChange(); // 刷新数据监听
+                        getStorageSoloData();
+                        getStorageBattleData();
                       });
-                      },
+
+                    },
                      child: Container(
                        margin: EdgeInsets.only(right: 24),
                        child: Image(
@@ -383,25 +420,28 @@ class _SoloHomeControllerState extends State<SoloHomeController> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   GestureDetector(onTap: (){
-                     if (showDataMode == ShowBattleTopAvgMode.redData) {
-                       showDataMode = ShowBattleTopAvgMode.greenDats;
+                     if (showDataType == ShowBattleDataType.showTopData) {
+                       showDataType = ShowBattleDataType.showAvgData;
                      } else {
-                       showDataMode = ShowBattleTopAvgMode.redData;
+                       showDataType = ShowBattleDataType.showTopData;
                      }
+
+                     Vibration.vibrate(duration: 500);
                      print("切换蓝红方top等数据");
                      setState(() {});
                   },
                    child: Container(
                      // color: Colors.red,
                      child:Column(
-
                        mainAxisAlignment: MainAxisAlignment.center,
                        children: [
                          Row(
                            mainAxisAlignment: MainAxisAlignment.center,
                            crossAxisAlignment: CrossAxisAlignment.center,
                            children: [
-                             Constants.regularWhiteTextWidget("Top Speed", 16, Constants.typeTextColor),
+
+                             Constants.regularWhiteTextWidget(showDataType == ShowBattleDataType.showTopData ? "Top Speed"
+                                 : "Avg.Speed", 16, Constants.typeTextColor),
                              SizedBox(width: 8,),
                              Image(
                                fit: BoxFit.cover,
@@ -412,12 +452,12 @@ class _SoloHomeControllerState extends State<SoloHomeController> {
                            ],
                          ),
                          SizedBox(height: 4,),
-                         showDataMode == ShowBattleTopAvgMode.redData ?
+                         showDataType == ShowBattleDataType.showTopData ?
                          Constants.boldWhiteTextWidget("${BluetoothManager().currentSpeedUnit == "Km/h" ? battleRedTopSpeed.toStringAsFixed(0)
                              : (battleRedTopSpeed * 0.621371).toStringAsFixed(0)}${BluetoothManager().currentSpeedUnit}", 16)
                              :
-                         Constants.boldWhiteTextWidget("${BluetoothManager().currentSpeedUnit == "Km/h" ? battleGreenTopSpeed.toStringAsFixed(0)
-                             : (battleGreenTopSpeed * 0.621371).toStringAsFixed(0)}${BluetoothManager().currentSpeedUnit}", 16)
+                         Constants.boldWhiteTextWidget("${BluetoothManager().currentSpeedUnit == "Km/h" ? battleRedAvgSpeed.toStringAsFixed(0)
+                             : (battleRedAvgSpeed * 0.621371).toStringAsFixed(0)}${BluetoothManager().currentSpeedUnit}", 16)
                        ],
 
                      ),
@@ -425,12 +465,13 @@ class _SoloHomeControllerState extends State<SoloHomeController> {
                   ),
 
                  GestureDetector(onTap: (){
-                   if (showDataMode == ShowBattleTopAvgMode.redData) {
-                     showDataMode = ShowBattleTopAvgMode.greenDats;
+                   Vibration.vibrate(duration: 500);
+                   if (showDataType == ShowBattleDataType.showTopData) {
+                     showDataType = ShowBattleDataType.showAvgData;
                    } else {
-                     showDataMode = ShowBattleTopAvgMode.redData;
+                     showDataType = ShowBattleDataType.showTopData;
                    }
-                   print("切换蓝红方top等数据");
+                   print("切换top avg等数据");
                    setState(() {});
                  },
                    child:Column(
@@ -440,7 +481,8 @@ class _SoloHomeControllerState extends State<SoloHomeController> {
                          mainAxisAlignment: MainAxisAlignment.center,
                          crossAxisAlignment: CrossAxisAlignment.center,
                          children: [
-                           Constants.regularWhiteTextWidget("Avg.Speed", 16, Constants.typeTextColor),
+                           Constants.regularWhiteTextWidget(showDataType == ShowBattleDataType.showTopData ? "Top Speed"
+                               : "Avg.Speed", 16, Constants.typeTextColor),
                            SizedBox(width: 8,),
                            Image(
                              fit: BoxFit.cover,
@@ -451,10 +493,12 @@ class _SoloHomeControllerState extends State<SoloHomeController> {
                          ],
                        ),
                        SizedBox(height: 4,),
-                       showDataMode == ShowBattleTopAvgMode.redData ?
-                       Constants.boldWhiteTextWidget("${battleRedAvgSpeed}km/h", 16)
+                       showDataType == ShowBattleDataType.showTopData ?
+                       Constants.boldWhiteTextWidget("${BluetoothManager().currentSpeedUnit == "Km/h" ? battleGreenTopSpeed.toStringAsFixed(0)
+                           : (battleGreenTopSpeed * 0.621371).toStringAsFixed(0)}${BluetoothManager().currentSpeedUnit}", 16)
                            :
-                       Constants.boldWhiteTextWidget("${battleGreenAvgSpeed}km/h", 16)
+                       Constants.boldWhiteTextWidget("${BluetoothManager().currentSpeedUnit == "Km/h" ? battleGreenAvgSpeed.toStringAsFixed(0)
+                           : (battleGreenAvgSpeed * 0.621371).toStringAsFixed(0)}${BluetoothManager().currentSpeedUnit}", 16)
                      ],
 
                    ),
@@ -482,7 +526,9 @@ class _SoloHomeControllerState extends State<SoloHomeController> {
                         height: 1.2,),
                       children: <TextSpan>[
                         TextSpan(
-                          text: '\n${soloTopSpeed}km/h',
+                          text: BluetoothManager().currentSpeedUnit == "Km/h" ? '\n${soloTopSpeed}${BluetoothManager().currentSpeedUnit}'
+                            : '\n${(soloTopSpeed*0.621373).toStringAsFixed(0)}${BluetoothManager().currentSpeedUnit}',
+
                           style: TextStyle(
                             color:Colors.white,
                             fontFamily: 'SanFranciscoDisplay',
@@ -506,7 +552,8 @@ class _SoloHomeControllerState extends State<SoloHomeController> {
                             height: 1.2,),
                           children: <TextSpan>[
                             TextSpan(
-                              text: '\n${soloAvgSpeed} km/h',
+                              text: BluetoothManager().currentSpeedUnit == "Km/h" ? '\n${soloAvgSpeed}${BluetoothManager().currentSpeedUnit}'
+                                  : '\n${(soloAvgSpeed*0.621373).toStringAsFixed(0)}${BluetoothManager().currentSpeedUnit}',
                               style: TextStyle(
                                 color:Colors.white,
                                 fontFamily: 'SanFranciscoDisplay',

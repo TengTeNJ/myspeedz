@@ -1,9 +1,14 @@
 import 'dart:io';
 
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import '../constants/constants.dart';
 import 'blue_tooth_manager.dart';
+import 'color.dart';
 
 class BleUtil {
   /*处理蓝牙状态*/
@@ -133,37 +138,60 @@ class BleUtil {
   /*开始搜索*/
   static begainScan(BuildContext context) async {
 
+    final isOK = await ensureBleScanReady();
     ///
-    if (Platform.isAndroid) {
+    if (Platform.isIOS) {
       PermissionStatus locationPermission = await Permission.location.request();
       PermissionStatus bleScan = await Permission.bluetoothScan.request();
       PermissionStatus bleConnect = await Permission.bluetoothConnect.request();
       if (locationPermission == PermissionStatus.granted &&
           bleScan == PermissionStatus.granted &&
           bleConnect == PermissionStatus.granted) {
+        print("点击允许了");
         // 因为蓝牙监听那里不能立刻监听到 这里加延时处理
         Future.delayed(Duration(milliseconds: 600), () {
-          bool result =  true;
-          ///BleUtil.handleBleStatu(context);
-          if (result) {
+          // bool result = BleUtil.handleBleStatu(context);
+          // if (result) {
             BluetoothManager().startNewScan();
-          }
+          // }
         });
       } else {
+        print("点击不允许");
         // BleUtil.handleBleStatu(context);
       }
     } else {
-      bool result = true;
-     // BleUtil.handleBleStatu(context);
-      if (result) {
-        BluetoothManager().startNewScan();
-      }else{
-        print('苹果手机蓝牙没开');
-        Future.delayed(Duration(milliseconds: 2000),(){
-          BluetoothManager().startNewScan();
-        });
-      }
+        if (isOK)  BluetoothManager().startNewScan();
     }
+  }
+
+
+  /// 确认相关权限，安卓额外需要定位权限
+ static Future<bool> ensureBleScanReady() async {
+    if (!Platform.isAndroid) return true;
+
+    final android = await DeviceInfoPlugin().androidInfo;
+    final sdk = android.version.sdkInt;
+
+    // 1. 根据系统版本组装权限列表
+    final permissions = [
+      if (sdk >= 31) ...[
+        Permission.bluetoothScan,
+        Permission.bluetoothConnect,
+      ] else
+        Permission.location,
+    ];
+
+    // 2. 请求权限
+    final result = await permissions.request();
+    final allGranted = result.values.every((s) => s.isGranted);
+    if (!allGranted) {
+      // 用户拒绝/永久拒绝
+      if (result.values.any((s) => s.isPermanentlyDenied)) {
+        await openAppSettings(); // 引导手动开启
+      }
+      return false;
+    }
+    return true;
   }
 
 }

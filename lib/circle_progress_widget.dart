@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:my_speedz/solo_home_controller.dart';
 import 'package:my_speedz/utils/blue_tooth_manager.dart';
 import 'package:my_speedz/utils/data_base.dart';
+import 'package:my_speedz/utils/event_bus.dart';
 import 'package:my_speedz/view/battle_data_view.dart';
 
 import 'constants/constants.dart';
@@ -115,8 +116,10 @@ class _CircleProgressWidgetState extends State<CircleProgressWidget> {
           } else {
             BluetoothManager().currentSpeedUnit = "Km/h";
             DataBaseHelper().saveSpeedUnitData("Km/h");
-            print("切换速度单位${BluetoothManager().currentSpeedUnit}");
+            // print("切换速度单位${BluetoothManager().currentSpeedUnit}");
           }
+          EventBus().sendEvent(kChangeSpeedUnitSuccess);
+
           setState(() {});
           },
           child:Row(
