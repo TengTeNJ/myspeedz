@@ -159,7 +159,7 @@ class _SoloHomeControllerState extends State<SoloHomeController> {
         setState(() {});
         Future.delayed(Duration(milliseconds: 500),(){
           indicatorColor = Constants.grayIndicatirColor;
-          setState(() {});
+          // setState(() {});
           measuredSoeedAnimation(measureSpeed);
         });
 

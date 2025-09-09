@@ -35,10 +35,14 @@ class _BleListViewState extends State<BleListView> {
       if (event == kInitiativeDisconnectFive) {
          print("断开连接了");
          nameColor = Constants.grayTextColor;
-         setState(() {});
+         if (mounted) {
+           setState(() {});
+         }
       } else if(event == kConnectSuccess) {
         nameColor = Color.fromRGBO(28, 235, 56, 1.0);
-        setState(() {});
+        if (mounted) {
+          setState(() {});
+        }
       }
     });
   }

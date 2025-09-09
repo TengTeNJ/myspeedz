@@ -66,8 +66,6 @@ class BluetoothManager{
   Function(int measuredSpeed)? dataChange; // 测量到速度变化
   Function()? disConnect; // 机器人断链
 
-
-
   /*开始扫描*/
   Future<void> startNewScan() async {
     // 不能重复扫描
@@ -104,13 +102,14 @@ class BluetoothManager{
 
   /*连接设备*/
   conectToDevice(BLEModel model) {
-
-    if (model.hasConected == true) {
+    if (model.hasConected == true || conectedDeviceCount.value > 0) {
       // 已连接状态直接返回
+      print("已经连接设备了");
       return;
     }
-    //EasyLoading.show();
-    _ble
+    EasyLoading.show(status: "connecting...",maskType:EasyLoadingMaskType.clear);
+
+    StreamSubscription<ConnectionStateUpdate> stream =  _ble
         .connectToDevice(
         id: model.device.id, connectionTimeout: Duration(seconds: 10))
         .listen((ConnectionStateUpdate connectionStateUpdate) {
@@ -141,16 +140,17 @@ class BluetoothManager{
 
         // 连接成功弹窗
         EasyLoading.showSuccess('Bluetooth connection successful');
+        EasyLoading.dismiss();
         EventBus().sendEvent(kConnectSuccess);
 
         // 监听数据
-        Future.delayed(Duration(milliseconds: 2000),(){
+        // Future.delayed(Duration(milliseconds: 2000),(){
           _ble.subscribeToCharacteristic(notifyCharacteristic).listen((data) {
             print("deviceId =${model.device.id}---上报来的数据data = $data");
-            List<int> bytes = data;
-            BluetoothManager().dataChange?.call(bytes[0]);
+              List<int> bytes = data;
+              BluetoothManager().dataChange?.call(bytes[0]);
           });
-        });
+        // });
       } else if (connectionStateUpdate.connectionState ==
           DeviceConnectionState.disconnected) {
           EasyLoading.showError('disconected',duration: Duration(milliseconds: 5000));
@@ -159,7 +159,6 @@ class BluetoothManager{
           DataBaseHelper().deleteData(kDataBaseBattleListTableName, "0");
 
           BluetoothManager().disConnect?.call();
-
         if(conectedDeviceCount.value > 0){
           conectedDeviceCount.value--;
         }
@@ -169,10 +168,12 @@ class BluetoothManager{
         deviceListLength.value = this.deviceList.length;
       }
     });
+    model.bleStream = stream;
   }
 
   /*断开连接 */
   disconnectDevice(BLEModel model) {
+    model.bleStream?.cancel();
     EasyLoading.showToast('Disconnected');
     if (conectedDeviceCount.value > 0) {
       conectedDeviceCount.value--;
