@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:my_speedz/utils/data_base.dart';
+import 'package:my_speedz/utils/protocol_manager.dart';
 import 'package:my_speedz/utils/speedz_manager.dart';
 
 import '../constants/constants.dart';
@@ -14,6 +15,7 @@ import 'event_bus.dart';
 
 class BluetoothManager{
   static final BluetoothManager _instance = BluetoothManager._internal();
+  final parser = SpeedProtocolParser();
 
   factory BluetoothManager() {
     _instance.listenBLEStatu();
@@ -107,6 +109,22 @@ class BluetoothManager{
       print("已经连接设备了");
       return;
     }
+
+    // 连接时就开始监听
+    parser.onData = (data) {
+      if (data.speed != null) {
+        print("速度: ${data.speed}");
+        // 传递速度
+        BluetoothManager().dataChange?.call(data.speed!);
+      }
+      if (data.battery != null) {
+        print("电量: ${data.battery}");
+      }
+      if (data.version != null) {
+        print("版本: ${data.version}");
+      }
+    };
+
     EasyLoading.show(status: "connecting...",maskType:EasyLoadingMaskType.clear);
 
     StreamSubscription<ConnectionStateUpdate> stream =  _ble
@@ -128,13 +146,20 @@ class BluetoothManager{
         model.hasConected = true;
         // 保存读写特征值
         late final notifyCharacteristic;
+        late final writerCharacteristic;
+
         if(model.device.name == kBLEDevice_NewName){
           // seeker bot
           notifyCharacteristic = QualifiedCharacteristic(
               serviceId: Uuid.parse(kBLE_270_SERVICE_UUID),
               characteristicId: Uuid.parse(kBLE_270_CHARACTERISTIC_NOTIFY_UUID),
               deviceId: model.device.id);
+          writerCharacteristic = QualifiedCharacteristic(
+              serviceId: Uuid.parse(kBLE_270_SERVICE_UUID),
+              characteristicId: Uuid.parse(kBLE_270_CHARACTERISTIC_WRITER_UUID),
+              deviceId: model.device.id);
           model.notifyCharacteristic = notifyCharacteristic;
+          model.writerCharacteristic = writerCharacteristic;
         }
 
 
@@ -148,7 +173,9 @@ class BluetoothManager{
           _ble.subscribeToCharacteristic(notifyCharacteristic).listen((data) {
             print("deviceId =${model.device.id}---上报来的数据data = $data");
               List<int> bytes = data;
-              BluetoothManager().dataChange?.call(bytes[0]);
+              // 解析数据
+            parser.onReceive(bytes);
+            // BluetoothManager().dataChange?.call(bytes[0]);
           });
         // });
       } else if (connectionStateUpdate.connectionState ==
@@ -171,6 +198,29 @@ class BluetoothManager{
     model.bleStream = stream;
   }
 
+  /*发送数据*/
+  writerDataToDevice(BLEModel model, List<int> data) async {
+    //  数据校验
+    if (data == null || data.length == 0) {
+      return;
+    }
+    // 确认蓝牙设备已连接 并保存对应的特征值
+    if (model == null ||
+        model.hasConected == null ||
+        model.writerCharacteristic == null) {
+      //TTToast.showErrorInfo('Please connect your device first');
+      return;
+    }
+
+    // 多个命令同时发时 增加10ms的时间间隔
+   // sleep(Duration(milliseconds: 10));
+    if(model.writerCharacteristic == null){
+      return;
+    }
+    await _ble.writeCharacteristicWithoutResponse(model.writerCharacteristic!,
+        value: data);
+  }
+
   /*断开连接 */
   disconnectDevice(BLEModel model) {
     model.bleStream?.cancel();
@@ -187,6 +237,7 @@ class BluetoothManager{
     model.hasConected = false;
     EventBus().sendEvent(kInitiativeDisconnectFive);
   }
+
 
   /*判断是否已经被添加设备列表*/
   bool hasDevice(String id) {
